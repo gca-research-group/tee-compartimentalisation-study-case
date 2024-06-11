@@ -1,1 +1,1 @@
-# TEE compartimentalisation launcher integration process
+# Launcher of the integration process in TEE based on compartmentalisation
