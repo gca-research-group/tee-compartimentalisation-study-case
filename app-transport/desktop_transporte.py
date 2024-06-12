@@ -8,7 +8,7 @@
 #              :
 # Description  : The desktop_transporte.py code defines a GUI application using Tkinter to schedule transport 
 #              : journeys. The TransportAppGUI class initialises the graphical interface and connects to an 
-#              : SQLite transport_app.db database. The interface allows you to view lists of drivers and vehicles, 
+#              : SQLite transporte_app.db database. The interface allows you to view lists of drivers and vehicles, 
 #              : and includes fields for entering details of a journey, such as origin, destination, date/time and 
 #              : value. The application allows the user to select a driver and a vehicle from the list, fill in the 
 #              : journey details, and then schedule the journey, which is inserted into the database. The interface 
