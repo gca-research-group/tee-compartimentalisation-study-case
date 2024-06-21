@@ -76,7 +76,6 @@
  * 
  * 
 */
-
 // Include standard C libraries. It was not possible to use specific libraries because they do not support CHERI.
 #include <stdio.h>
 #include <stdlib.h>
@@ -95,6 +94,7 @@
 // Define URLs and ports for APIs
 /* IP addresses are used directly because a memory allocation error occurs in the execution for CHERI capabilities 
 when using DNS. */
+
 #define API1_URL "200.17.87.181" // It's the IP address of: gca-vm-4.unijui.edu.br
 #define API1_PORT "8080"
 #define API1_ENDPOINT "/api/vendas"
@@ -107,7 +107,7 @@ when using DNS. */
 #define API3_PORT "8080"
 #define API3_ENDPOINT "/send-message" 
 
-/* URL and port for local testing
+/*
 #define API1_URL "127.0.0.1"
 #define API1_PORT "8000"
 #define API1_ENDPOINT "/api/vendas"
@@ -136,18 +136,16 @@ char *last_sale = NULL;
 size_t last_sale_size = 0;
 char *last_printed_sale = NULL;
 
-// Variables for synchronization control
+// Variables for synchronisation control
 pthread_mutex_t keys_mutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t keys_cond = PTHREAD_COND_INITIALIZER;
-int certificate_generated = 0;
+int keys_generated = 0;
 
-/* Initializes the SSL context for secure communication using OpenSSL. Loads the certificate and private key files to 
-establish a secure connection. Returns a pointer to the initialized SSL_CTX structure. */
 SSL_CTX *initialize_ssl_context() {
     const SSL_METHOD *method;
     SSL_CTX *ctx;
 
-    // Initialize the OpenSSL library
+    // Initialises the OpenSSL library
     OpenSSL_add_all_algorithms();
     SSL_load_error_strings();
     method = TLS_client_method();
@@ -159,10 +157,10 @@ SSL_CTX *initialize_ssl_context() {
     }
 
     // Paths to the certificate and private key files
-    const char *cert_file = "provenance/generate-keys/keys/certificate.pem";
-    const char *key_file = "provenance/generate-keys/keys/private_key.pem";
+    const char *cert_file = "/home/regis/NB-LOCAL-attestable/launcher/keys/cert.pem";
+    const char *key_file = "/home/regis/NB-LOCAL-attestable/launcher/keys/prk.pem";
 
-    // Check the existence of the files
+    // Verifica a existência dos arquivos
     if (access(cert_file, F_OK) == -1) {
         fprintf(stderr, "Certificate file not found: %s\n", cert_file);
         abort();
@@ -173,7 +171,7 @@ SSL_CTX *initialize_ssl_context() {
         abort();
     }
 
-    // Load the certificate and private key files
+    // Upload the certificate and private key files
     if (SSL_CTX_use_certificate_file(ctx, cert_file, SSL_FILETYPE_PEM) <= 0) {
         ERR_print_errors_fp(stderr);
         abort();
@@ -187,8 +185,6 @@ SSL_CTX *initialize_ssl_context() {
     return ctx;
 }
 
-/* Cleans up and frees resources used by the SSL connection and context. Shuts down the SSL connection, frees the SSL structure, 
-and frees the SSL_CTX structure. Cleans up OpenSSL error strings and algorithms. */
 void cleanup_ssl(SSL *ssl, SSL_CTX *ctx) {
     if (ssl) {
         SSL_shutdown(ssl);
@@ -201,8 +197,6 @@ void cleanup_ssl(SSL *ssl, SSL_CTX *ctx) {
     EVP_cleanup();
 }
 
-/* Sends a GET request to the Travel API (API2) to obtain the travel confirmation message. Establishes a secure connection 
-using SSL and sends the request. Reads the response and extracts the confirmation message from the JSON response. */
 void get_travel_confirmation_message() {
     SSL_CTX *ctx = NULL;
     SSL *ssl = NULL;
@@ -214,40 +208,33 @@ void get_travel_confirmation_message() {
     ctx = initialize_ssl_context();
     if (!ctx) goto cleanup;
 
-    // Create a socket
     server = socket(AF_INET, SOCK_STREAM, 0);
     if (server < 0) {
         perror("Error creating socket");
         goto cleanup;
     }
 
-    // Configure server address
     memset(&server_addr, 0, sizeof(server_addr));
     server_addr.sin_family = AF_INET;
     server_addr.sin_port = htons(atoi(API2_PORT));
     inet_pton(AF_INET, API2_URL, &server_addr.sin_addr);
 
-    // Connect to the server
     if (connect(server, (struct sockaddr *)&server_addr, sizeof(server_addr)) < 0) {
         perror("Error connecting to server");
         goto cleanup;
     }
 
-    // Create SSL structure and set file descriptor
     ssl = SSL_new(ctx);
     SSL_set_fd(ssl, server);
 
-    // Establish SSL connection
     if (SSL_connect(ssl) <= 0) {
         ERR_print_errors_fp(stderr);
         goto cleanup;
     }
 
-    // Send GET request to the API
     snprintf(request, sizeof(request), "GET %s HTTP/1.1\r\nHost: %s\r\nConnection: close\r\n\r\n", API2_ENDPOINT, API2_URL);
     SSL_write(ssl, request, strlen(request));
 
-    // Read the response
     while ((numbytes = SSL_read(ssl, request, sizeof(request) - 1)) > 0) {
         request[numbytes] = '\0';
         char *response_data = strstr(request, "{\"message\":");
@@ -262,13 +249,10 @@ void get_travel_confirmation_message() {
     }
 
 cleanup:
-    // Clean up resources
     if (server >= 0) close(server);
     cleanup_ssl(ssl, ctx);
 }
 
-/* Sends a POST request to the WhatsApp API (API3) to send a confirmation message. Establishes a secure connection using SSL 
-and sends the request with the phone number and message as JSON payload. Reads the response from the API. */
 void send_message_confirmation_whatsapp(const char *number, const char *message) {
     SSL_CTX *ctx = NULL;
     SSL *ssl = NULL;
@@ -282,41 +266,34 @@ void send_message_confirmation_whatsapp(const char *number, const char *message)
     ctx = initialize_ssl_context();
     if (!ctx) goto cleanup;
 
-    // Create a socket
     server = socket(AF_INET, SOCK_STREAM, 0);
     if (server < 0) {
         perror("Error creating socket");
         goto cleanup;
     }
 
-    // Configure server address
     memset(&server_addr, 0, sizeof(server_addr));
     server_addr.sin_family = AF_INET;
     server_addr.sin_port = htons(atoi(API3_PORT));
     inet_pton(AF_INET, API3_URL, &server_addr.sin_addr);
 
-    // Connect to the server
     if (connect(server, (struct sockaddr *)&server_addr, sizeof(server_addr)) < 0) {
         perror("Error connecting to the server");
         goto cleanup;
     }
 
-    // Create SSL structure and set file descriptor
     ssl = SSL_new(ctx);
     SSL_set_fd(ssl, server);
 
-    // Establish SSL connection
     if (SSL_connect(ssl) <= 0) {
         ERR_print_errors_fp(stderr);
         goto cleanup;
     }
 
-    // Send POST request to the API
     snprintf(request, sizeof(request), "POST %s HTTP/1.1\r\nHost: %s\r\nContent-Type: application/json\r\nContent-Length: %zu\r\nConnection: close\r\n\r\n%s",
              API3_ENDPOINT, API3_URL, strlen(post_fields), post_fields);
     SSL_write(ssl, request, strlen(request));
 
-    // Read the response
     char response[1000];
     ssize_t numbytes;
     while ((numbytes = SSL_read(ssl, response, sizeof(response) - 1)) > 0) {
@@ -329,13 +306,10 @@ void send_message_confirmation_whatsapp(const char *number, const char *message)
     }
 
 cleanup:
-    // Clean up resources
     if (server >= 0) close(server);
     cleanup_ssl(ssl, ctx);
 }
 
-/* Extracts the total value of a sale from the JSON data. Searches for the "Total": field in the JSON string and 
-parses the value. Returns the extracted total value as a double. */
 double extract_total_value(const char *data) {
     const char *total_start = strstr(data, "\"Total\": ");
     if (total_start != NULL) {
@@ -346,8 +320,6 @@ double extract_total_value(const char *data) {
     return -1.0;
 }
 
-/* Extracts the client address from the JSON data. Searches for the "Endereco": field in the JSON string and parses 
-the address. Returns the extracted address as a dynamically allocated string. */
 char *extract_client_address(const char *data) {
     const char *endereco_start = strstr(data, "\"Endereco\": \"");
     if (endereco_start != NULL) {
@@ -366,8 +338,6 @@ char *extract_client_address(const char *data) {
     return NULL;
 }
 
-/* Extracts the client phone number from the JSON data. Searches for the "Telefone": field in the JSON string and 
-parses the phone number. Returns the extracted phone number as a dynamically allocated string. */
 char *extract_client_phone(const char *data) {
     const char *telefone_start = strstr(data, "\"Telefone\": \"");
     if (telefone_start != NULL) {
@@ -386,9 +356,6 @@ char *extract_client_phone(const char *data) {
     return NULL;
 }
 
-/* Parses the last sale data stored in last_sale. Extracts and prints the total value, client address, 
-and phone number. Schedules a trip if the total sale value is greater than 150. Avoids reprocessing the 
-same sale data by checking against last_printed_sale. */
 void parse_last_sale() {
     char *start = strrchr(last_sale, '{');
     if (start != NULL) {
@@ -424,9 +391,6 @@ void parse_last_sale() {
     }
 }
 
-/* Sends a GET request to the Sales API (API1) to check the last sale. Establishes a secure connection using SSL 
-and sends the request. Reads the response and stores the sale data in last_sale. Calls parse_last_sale() to process 
-the received sale data. */
 void check_last_sale() {
     SSL_CTX *ctx = NULL;
     SSL *ssl = NULL;
@@ -440,40 +404,33 @@ void check_last_sale() {
     ctx = initialize_ssl_context();
     if (!ctx) goto cleanup;
 
-    // Configure server address
     memset(&server_addr, 0, sizeof(server_addr));
     server_addr.sin_family = AF_INET;
     server_addr.sin_port = htons(atoi(API1_PORT));
     inet_pton(AF_INET, API1_URL, &server_addr.sin_addr);
 
-    // Create a socket
     server = socket(AF_INET, SOCK_STREAM, 0);
     if (server < 0) {
         perror("Error creating socket");
         goto cleanup;
     }
 
-    // Connect to the server
     if (connect(server, (struct sockaddr *)&server_addr, sizeof(server_addr)) < 0) {
         perror("Error connecting to server");
         goto cleanup;
     }
 
-    // Create SSL structure and set file descriptor
     ssl = SSL_new(ctx);
     SSL_set_fd(ssl, server);
 
-    // Establish SSL connection
     if (SSL_connect(ssl) <= 0) {
         ERR_print_errors_fp(stderr);
         goto cleanup;
     }
 
-    // Send GET request to the API
     snprintf(request, sizeof(request), "GET %s HTTP/1.1\r\nHost: %s\r\nConnection: close\r\n\r\n", API1_ENDPOINT, API1_URL);
     SSL_write(ssl, request, strlen(request));
 
-    // Read the response
     while ((numbytes = SSL_read(ssl, request, sizeof(request) - 1)) > 0) {
         request[numbytes] = '\0';
         if (last_sale == NULL) {
@@ -502,19 +459,14 @@ void check_last_sale() {
     }
 
 cleanup:
-    // Clean up resources
     if (server >= 0) close(server);
     cleanup_ssl(ssl, ctx);
 
-    // Parse the last sale data if no error occurred
     if (numbytes == 0) {
         parse_last_sale();
     }
 }
 
-/* Schedules a trip by sending a POST request to the Travel API (API2). Establishes a secure connection using SSL 
-and sends the request with trip details as JSON payload. Reads the response from the API. Sends a confirmation message 
-via WhatsApp using send_message_confirmation_whatsapp(). */
 void schedule_trip(const char *endereco_cliente, const char *telefone_cliente, double valor_total) {
     SSL_CTX *ctx = NULL;
     SSL *ssl = NULL;
@@ -526,36 +478,30 @@ void schedule_trip(const char *endereco_cliente, const char *telefone_cliente, d
     ctx = initialize_ssl_context();
     if (!ctx) goto cleanup;
 
-    // Configure server address
     memset(&server_addr, 0, sizeof(server_addr));
     server_addr.sin_family = AF_INET;
     server_addr.sin_port = htons(atoi(API2_PORT));
     inet_pton(AF_INET, API2_URL, &server_addr.sin_addr);
 
-    // Create a socket
     server = socket(AF_INET, SOCK_STREAM, 0);
     if (server < 0) {
         perror("Error creating socket");
         goto cleanup;
     }
 
-    // Connect to the server
     if (connect(server, (struct sockaddr *)&server_addr, sizeof(server_addr)) < 0) {
         perror("Error connecting to server");
         goto cleanup;
     }
 
-    // Create SSL structure and set file descriptor
     ssl = SSL_new(ctx);
     SSL_set_fd(ssl, server);
 
-    // Establish SSL connection
     if (SSL_connect(ssl) <= 0) {
         ERR_print_errors_fp(stderr);
         goto cleanup;
     }
 
-    // Prepare JSON payload with trip details
     time_t raw_time;
     struct tm *timeinfo;
     time(&raw_time);
@@ -565,11 +511,9 @@ void schedule_trip(const char *endereco_cliente, const char *telefone_cliente, d
 
     snprintf(payload, sizeof(payload), "{\"local_origem\": \"Acme Store\", \"local_destino\": \"%s\", \"telefone_cliente\": \"%s\", \"id_motorista\": 1, \"id_veiculo\": 2, \"id_passageiro\": 3, \"data_hora_inicio\": \"%s\", \"valor\": %.2lf}", endereco_cliente, telefone_cliente, datetime_str, valor_total);
 
-    // Send POST request to the API
     snprintf(request, sizeof(request), "POST %s HTTP/1.1\r\nHost: %s\r\nContent-Type: application/json\r\nContent-Length: %lu\r\nConnection: close\r\n\r\n%s", API2_ENDPOINT, API2_URL, strlen(payload), payload);
     SSL_write(ssl, request, strlen(request));
 
-    // Read the response
     char response[1000];
     ssize_t numbytes;
     while ((numbytes = SSL_read(ssl, response, sizeof(response) - 1)) > 0) {
@@ -582,60 +526,54 @@ void schedule_trip(const char *endereco_cliente, const char *telefone_cliente, d
     }
 
 cleanup:
-    // Clean up resources
     if (server >= 0) close(server);
     cleanup_ssl(ssl, ctx);
 
-    // Send confirmation message via WhatsApp
     send_message_confirmation_whatsapp(telefone_cliente, "Your trip has been successfully booked. Wait for the car to arrive...!");
 }
 
-/* Runs a Python script to generate the cryptographic key pair (PuK and PrK) and the digital certificate. 
-Signals the main thread that the keys have been generated using a mutex and a condition variable. Exits the 
-thread after generating the keys. */
-void *generate_certificate(void *arg) {
+void *generate_keys(void *arg) {
     char command[256];
-    snprintf(command, sizeof(command), "python3 provenance/generate-certificate/generate_certificate.py %d", getpid());
+    // Atualize o caminho aqui para garantir que está correto
+    snprintf(command, sizeof(command), "python3 /home/regis/NB-LOCAL-attestable/launcher/attestable/generate-certificate/generate_certificate.py %d", getpid());
     int ret = system(command);
     if (ret != 0) {
         fprintf(stderr, "Error generating keys\n");
         pthread_exit((void *)1);
     }
 
-    // Notify that keys have been generated
     pthread_mutex_lock(&keys_mutex);
-    certificate_generated = 1;
+    keys_generated = 1;
     pthread_cond_signal(&keys_cond);
     pthread_mutex_unlock(&keys_mutex);
 
     pthread_exit((void *)0);
 }
 
-// Main function
+
 int main() {
-    pthread_t generate_certificate_thread;
+    pthread_t generate_keys_thread;
 
     // Create and start the thread to generate keys
-    if (pthread_create(&generate_certificate_thread, NULL, generate_certificate, NULL) != 0) {
+    if (pthread_create(&generate_keys_thread, NULL, generate_keys, NULL) != 0) {
         fprintf(stderr, "Error creating thread\n");
         return 1;
     }
 
     // Wait for the keys to be generated
     pthread_mutex_lock(&keys_mutex);
-    while (!certificate_generated) {
+    while (!keys_generated) {
         pthread_cond_wait(&keys_cond, &keys_mutex);
     }
     pthread_mutex_unlock(&keys_mutex);
 
-    // Main loop to check the last sale periodically
     while (1) {
         check_last_sale();
-        sleep(5); // Check for a new sale every 5 seconds
+        sleep(1); // Checks a new sale every 5 seconds
     }
 
     // Wait for the keys generation thread to finish
-    pthread_join(generate_certificate_thread, NULL);
+    pthread_join(generate_keys_thread, NULL);
 
     return 0;
 }

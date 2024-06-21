@@ -70,30 +70,59 @@
 
 from flask import Flask, request, jsonify
 import os
-import sqlite3
+import json
 import subprocess
 import stat
+import signal
+import sys
 
 # Application settings
-DATABASE = 'data_access/files.db'
 UPLOAD_FOLDER = 'uploads'
+EXECUTABLE_FOLDER = 'executables'
 ALLOWED_EXTENSIONS = {'c'}  # Only allow files with .c extension
 MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16MB file size limit
+FILE_DATABASE = 'data_access/file_database.json'
 
 # Initialize the Flask application
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['EXECUTABLE_FOLDER'] = EXECUTABLE_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = MAX_CONTENT_LENGTH
+
+# In-memory file database
+file_db = {}
 
 def allowed_file(filename):
     """Check if the file has an allowed extension."""
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-def get_db_connection():
-    """Get a connection to the SQLite database."""
-    connection = sqlite3.connect(DATABASE)
-    connection.row_factory = sqlite3.Row
-    return connection
+def load_file_database():
+    """Load the file database from the JSON file."""
+    global file_db
+    if os.path.exists(FILE_DATABASE):
+        with open(FILE_DATABASE, 'r') as db_file:
+            file_db = json.load(db_file)
+        # Verify existence of files and executables
+        for program_id, file_info in list(file_db.items()):
+            if not os.path.exists(file_info['file_path']) or (file_info['executable'] and not os.path.exists(file_info['executable'])):
+                del file_db[program_id]
+        save_file_database()
+    else:
+        file_db = {}
+
+def save_file_database():
+    """Save the file database to the JSON file."""
+    with open(FILE_DATABASE, 'w') as db_file:
+        json.dump(file_db, db_file)
+
+def handle_exit_signal(signum, frame):
+    """Handle exit signals to save the database."""
+    save_file_database()
+    sys.exit(0)
+
+# Register signal handlers to save the database on exit
+signal.signal(signal.SIGINT, handle_exit_signal)
+signal.signal(signal.SIGTERM, handle_exit_signal)
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
@@ -120,12 +149,10 @@ def upload_file():
         os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
         file.save(secure_filename)
 
-        # Insert file information into the database
-        connection = get_db_connection()
-        connection.execute('INSERT INTO Files (file_name, file_path, executable) VALUES (?, ?, ?)', 
-                           (filename, secure_filename, None))
-        connection.commit()
-        connection.close()
+        # Insert file information into the in-memory database
+        program_id = len(file_db) + 1
+        file_db[program_id] = {'file_name': filename, 'file_path': secure_filename, 'executable': None}
+        save_file_database()
 
         return jsonify({'message': 'File successfully uploaded'}), 200
 
@@ -134,48 +161,53 @@ def upload_file():
 @app.route('/files', methods=['GET'])
 def list_files():
     """Endpoint to list all uploaded files."""
-    connection = get_db_connection()
-    files = connection.execute('SELECT * FROM Files').fetchall()
-    connection.close()
-
-    files_list = [{'id': file['id'], 'file_name': file['file_name'], 'file_path': file['file_path']} for file in files]
+    files_list = [{'id': file_id, 'file_name': file_info['file_name'], 'file_path': file_info['file_path'], 'executable': file_info['executable']} for file_id, file_info in file_db.items()]
     return jsonify(files_list), 200
 
 @app.route('/files/<int:program_id>', methods=['DELETE'])
 def delete_file(program_id):
     """Endpoint to delete a specific file."""
-    connection = get_db_connection()
-    file_info = connection.execute('SELECT * FROM Files WHERE id = ?', (program_id,)).fetchone()
-    if not file_info:
+    app.logger.debug(f"Delete request received for program ID: {program_id}")
+
+    if program_id not in file_db:
+        app.logger.error(f"File not found for program ID: {program_id}")
         return jsonify({'error': 'File not found'}), 404
 
-    connection.execute('DELETE FROM Files WHERE id = ?', (program_id,))
-    connection.commit()
-    connection.close()
+    file_info = file_db.pop(program_id)
+    save_file_database()
+
+    app.logger.debug(f"File info to be deleted: {file_info}")
 
     if os.path.exists(file_info['file_path']):
         os.remove(file_info['file_path'])
+    else:
+        app.logger.warning(f"File path does not exist: {file_info['file_path']}")
 
+    executable_path = file_info['executable']
+    if executable_path and os.path.exists(executable_path):
+        os.remove(executable_path)
+    else:
+        app.logger.warning(f"Executable path does not exist: {executable_path}")
+
+    app.logger.info(f"File successfully deleted for program ID: {program_id}")
     return jsonify({'message': 'File successfully deleted'}), 200
 
 @app.route('/compile/<int:program_id>', methods=['POST'])
 def compile_program(program_id):
     """Endpoint to compile a specific program."""
-    connection = get_db_connection()
-    file_info = connection.execute('SELECT * FROM Files WHERE id = ?', (program_id,)).fetchone()
-    connection.close()
-
-    if not file_info:
+    if program_id not in file_db:
         return jsonify({'error': 'Invalid program selected'}), 404
 
+    file_info = file_db[program_id]
     file_path = file_info['file_path']
     if not os.path.exists(file_path):
         return jsonify({'error': 'File does not exist'}), 404
 
     executable_name = os.path.splitext(os.path.basename(file_path))[0]
-    executable_path = os.path.join(app.config['UPLOAD_FOLDER'], executable_name)
+    executable_path = os.path.join(app.config['EXECUTABLE_FOLDER'], executable_name)
 
-    compile_command = f"gcc {file_path} -o {executable_path}"
+    #compile_command = f"gcc {file_path} -o {executable_path} -lssl -lcrypto -lpthread"
+    compile_command = f"clang-morello -march=morello+c64 -mabi=purecap -g -o {executable_path} {file_path} -L. -Wl,-dynamic-linker,/libexec/ld-elf-c18n.so.1 -lssl -lcrypto -lpthread"
     try:
         result = subprocess.run(compile_command, shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         output = result.stdout.decode('utf-8')
@@ -186,17 +218,10 @@ def compile_program(program_id):
         if error_output:
             app.logger.error(f"Compilation error output for program ID {program_id}:\n{error_output}")
 
-        # Store the executable in the database
-        with open(executable_path, 'rb') as f:
-            executable_data = f.read()
+        # Store the executable path in the in-memory database
+        file_info['executable'] = executable_path
+        save_file_database()
 
-        connection = get_db_connection()
-        connection.execute('UPDATE Files SET executable = ? WHERE id = ?', (executable_data, program_id))
-        connection.commit()
-        connection.close()
-
-        # Remove the file from the filesystem after storing it in the database
-        os.remove(executable_path)
         return jsonify({'message': 'Compilation successful', 'output': output, 'error_output': error_output}), 200
     except subprocess.CalledProcessError as e:
         app.logger.error(f"Compilation failed for program ID {program_id}: {e}")
@@ -205,47 +230,36 @@ def compile_program(program_id):
 @app.route('/execute/<int:program_id>', methods=['POST'])
 def execute_program(program_id):
     """Endpoint to execute a compiled program."""
-    connection = get_db_connection()
-    file_info = connection.execute('SELECT * FROM Files WHERE id = ?', (program_id,)).fetchone()
-    connection.close()
-
-    if not file_info:
+    if program_id not in file_db:
         return jsonify({'error': 'Invalid program selected'}), 404
 
-    executable_data = file_info['executable']
-    if not executable_data:
+    executable_path = file_db[program_id]['executable']
+    if not executable_path or not os.path.exists(executable_path):
         return jsonify({'error': 'Executable does not exist. Please compile the program first.'}), 404
-
-    executable_name = os.path.splitext(os.path.basename(file_info['file_path']))[0]
-    executable_path = os.path.join(app.config['UPLOAD_FOLDER'], executable_name)
-
-    # Write the executable back to the filesystem
-    with open(executable_path, 'wb') as f:
-        f.write(executable_data)
 
     # Set execution permissions for the file
     os.chmod(executable_path, stat.S_IRWXU)
 
-    execute_command = f"./{executable_path}"
+    # Execute the program using the specified command
+    execute_command = f"env LD_C18N_LIBRARY_PATH=. {executable_path}"
     try:
         result = subprocess.run(execute_command, shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         output = result.stdout.decode('utf-8')
         error_output = result.stderr.decode('utf-8')
-        
+
         # Log execution output
         app.logger.info(f"Execution output for program ID {program_id}:\n{output}")
         if error_output:
             app.logger.error(f"Execution error output for program ID {program_id}:\n{error_output}")
-        
+
         return jsonify({'message': 'Execution successful', 'output': output, 'error_output': error_output}), 200
     except subprocess.CalledProcessError as e:
         app.logger.error(f"Execution failed for program ID {program_id}: {e}")
         return jsonify({'error': f'Execution failed: {e}', 'output': e.output.decode('utf-8')}), 500
-    finally:
-        os.remove(executable_path)
 
 if __name__ == '__main__':
     os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+    os.makedirs(EXECUTABLE_FOLDER, exist_ok=True)
+    load_file_database()
     # Start the Flask server with HTTPS
     app.run(debug=True, ssl_context=('keys/cert.pem', 'keys/prk.pem'), host='127.0.0.1', port=5000)
-

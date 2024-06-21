@@ -41,7 +41,7 @@ private_key = rsa.generate_private_key(
 )
 
 # Save the private key to a file
-with open("provenance/generate-keys/keys/private_key.pem", "wb") as key_file:
+with open("/home/regis/NB-LOCAL-attestable/launcher/attestable/generate-certificate/keys/private_key.pem", "wb") as key_file:
     key_file.write(
         private_key.private_bytes(
             encoding=serialization.Encoding.PEM,
@@ -54,7 +54,7 @@ with open("provenance/generate-keys/keys/private_key.pem", "wb") as key_file:
 public_key = private_key.public_key()
 
 # Save the public key to a file
-with open("provenance/generate-keys/keys/public_key.pem", "wb") as key_file:
+with open("/home/regis/NB-LOCAL-attestable/launcher/attestable/generate-certificate/keys/public_key.pem", "wb") as key_file:
     key_file.write(
         public_key.public_bytes(
             encoding=serialization.Encoding.PEM,
@@ -80,7 +80,7 @@ signature = private_key.sign(
 )
 
 # Save the signature to a file
-with open('provenance/signature/file/signature.txt', 'wb') as signature_file:
+with open('/home/regis/NB-LOCAL-attestable/launcher/attestable/signature/file/signature.txt', 'wb') as signature_file:
     signature_file.write(signature)
 
 # Convert the hash and signature to hex strings for display
@@ -148,11 +148,10 @@ cert = x509.CertificateBuilder().subject_name(
 ).sign(private_key, hashes.SHA256(), default_backend())
 
 # Save the certificate to a file
-with open("provenance/generate-keys/keys/certificate.pem", "wb") as cert_file:
+with open("/home/regis/NB-LOCAL-attestable/launcher/attestable/generate-certificate/keys/certificate.pem", "wb") as cert_file:
     cert_file.write(cert.public_bytes(serialization.Encoding.PEM))
 
 # Print success message and the executable hash
 print(f"Executable SHA-256 Hash: {executable_hash_hex}")
 print(f"Signature: {signature_hex}")
 print("Private key, public key, and certificate generated successfully!")
-

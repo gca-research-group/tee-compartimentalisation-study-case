@@ -1,59 +1,9 @@
-##
-# Programmer   : Regis Rodolfo Schuch
-# Date         : 10 June 2024
-#              : Applied Computing Research Group, Unijui University, Brazil
-#              : regis.schuch@unijui.edu.br
-#              :
-# Title        : client_launcher.py 
-#              :
-# Description  : client_launcher.py defines a command line interface for interacting with the server server_launcher.py, 
-#              : which runs on a Morello Board using the Flask framework. The client_launcher interface uses the click 
-#              : library to create commands to list, upload, delete, compile and run C programmes on the server_launcher. 
-#              : It communicates with the server via HTTP requests using the requests library, with the server URL and 
-#              : SSL verification settings defined at the start. Each command corresponds to a specific server endpoint 
-#              : and handles the respective actions, such as sending file data, manipulating programme IDs and displaying 
-#              : results or errors. The run_menu function provides an interactive text-based menu for the user to choose 
-#              : these operations from, ensuring that the entries are valid and processing each option as required. SSL 
-#              : verification is optional and is set to False for local development, but can be enabled for use with 
-#              : valid SSL certificates.
-#              :
-# Source       : Some inspiration from
-#              : https://trstringer.com/easy-and-nice-python-cli/
-#              : https://www.youtube.com/watch?v=m1_48lmAX-Y
-#              : https://requests.readthedocs.io/en/latest/
-#              : https://peps.python.org/pep-0008/
-#              :
-# Install      :
-# dependencies : The client_launcher.py code was executed on the Unix-enabled CheriBSD Operating System, which extends 
-#              : FreeBSD
-#              : $ sudo pkg64 install python3
-#              :
-#              : $ sudo pkg64 install py39-pip
-#              : 
-#              : 
-# Compile and  :
-# run          : $ python3 client_launcher.py
-#              :
-#              :
-# Directory    :
-# structure    : app-transport
-#              : ├── client_launcher.py
-#              : ├── data_access
-#              : │   └── files.db
-#              : ├── executables
-#              : ├── keys
-#              : │   ├── cert.pem
-#              : │   ├── prk.pem
-#              : │   └── puk.pem
-#              : ├── server_launcher.py
-#              : └── uploads
-#              :
-##   
-
 import click
 import requests
+import subprocess
+import os
 
-SERVER_URL = 'https://127.0.0.1:5000' # Server running on Morello Board for local access
+SERVER_URL = 'https://127.0.0.1:5000'  # Server running on Morello Board for local access
 VERIFY_SSL = False  # Set to True if using a valid SSL certificate
 
 @click.group()
@@ -131,6 +81,14 @@ def execute(program_id):
             click.echo(f"Output:\n{output}")
         if error_output:
             click.echo(f"Error Output:\n{error_output}")
+
+        executable_path = response.json().get('executable_path')
+        if executable_path:
+            click.echo("Running in the current terminal:")
+            # Run directly in the current terminal with proper interactivity
+            subprocess.run([executable_path])
+        else:
+            click.echo("Executable path not provided.")
     else:
         click.echo(f"Error: {response.json().get('error')}")
         if response.json().get('output'):
@@ -147,13 +105,15 @@ def get_valid_input(prompt, validation_func):
 
 def run_menu():
     while True:
-        click.echo("\nMenu:")
-        click.echo("1. List files")
-        click.echo("2. Upload a file")
-        click.echo("3. Delete a program")
-        click.echo("4. Compile a program")
-        click.echo("5. Execute a program")
-        click.echo("6. Exit")
+        click.echo("\n|Menu:                  |")
+        click.echo("-------------------------")
+        click.echo("| 1. List files         |")
+        click.echo("| 2. Upload a file      |")
+        click.echo("| 3. Delete a program   |")
+        click.echo("| 4. Compile a program  |")
+        click.echo("| 5. Execute a program  |")
+        click.echo("| 6. Exit               |")
+        click.echo("-------------------------")
         choice = input("Choose an option: ")
 
         if choice == '1':
@@ -181,4 +141,3 @@ def run_menu():
 
 if __name__ == '__main__':
     run_menu()
-

@@ -1,0 +1,28 @@
+Total Physical Memory (RAM):
+hw.physmem: 17118408704
+Processor Model:
+hw.model: Research Morello SoC r0p0
+Number of CPUs:
+hw.ncpu: 4
+Detailed Processor Information:
+Starting CPU 1 (100)
+Starting CPU 2 (10000)
+Starting CPU 3 (10100)
+FreeBSD/SMP: Multiprocessor System Detected: 4 CPUs
+cpulist0: <Open Firmware CPU Group> on ofwbus0
+cpu0: <Open Firmware CPU> on cpulist0
+cpu1: <Open Firmware CPU> on cpulist0
+cpu2: <Open Firmware CPU> on cpulist0
+cpu3: <Open Firmware CPU> on cpulist0
+CPU  0: Research Morello SoC r0p0 affinity:  0  0  0
+CPU  1: Research Morello SoC r0p0 affinity:  0  1  0
+CPU  2: Research Morello SoC r0p0 affinity:  1  0  0
+CPU  3: Research Morello SoC r0p0 affinity:  1  1  0
+Operating System Version:
+14.0-CURRENT
+Operating System Name:
+FreeBSD
+Host Name:
+Tom
+Complete Operating System Information:
+FreeBSD Tom 14.0-CURRENT FreeBSD 14.0-CURRENT #0 8993e1c3bba: Thu Dec 15 23:25:54 UTC 2022     jenkins@ctsrd-build-linux-xx:/local/scratch/jenkins/workspace/CheriBSD-pipeline_releng_22.12/cheribsd-morello-purecap-build/local/scratch/jenkins/workspace/CheriBSD-pipeline_releng_22.12/cheribsd/arm64.aarch64c/sys/GENERIC-MORELLO arm64

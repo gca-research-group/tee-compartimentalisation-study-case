@@ -1,0 +1,3 @@
+$ ./cpu_noTEE
+Total execution time: 5311348 milliseconds
+

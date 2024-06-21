@@ -1,0 +1,2 @@
+$ env LD_C18N_LIBRARY_PATH=. ./CPU_inTEE
+Total execution time: 6940095 milliseconds
