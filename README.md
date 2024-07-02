@@ -1,6 +1,6 @@
-# Launcher of the integration process in TEE based on compartmentalisation
+# Case study of compartmentalisation-based TEE
 
-Description of Operation
+# Description of Operation
 1) App-Store, App-Transport and App-Whatsapp
 - Each of these directories contains an API (API1.py, API2.py, API3.py), a database (shopping.db, transport_app.db), and a key pair (cert.pem, priv.pem).
 - The APIs are responsible for providing specific endpoints:
@@ -17,7 +17,7 @@ Description of Operation
  - programs-data-base/certificates: Contains the attestables and keys generated for the execution environment of each executable.
  - attestable-data/signatures: Contains the signatures of the executables.
    
-Execution sequence
+# Execution sequence
 1) Launcher initialisation
  - The launcher is started by running launcher.py.
  - The launcher is ready to receive requests to upload, compile and run programmes.
