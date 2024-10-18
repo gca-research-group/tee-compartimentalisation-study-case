@@ -70,11 +70,12 @@ Each of these directories contains the following components:
   - Creates and stores the required certificates locally, outside the TEE.
   
 - **command-line-interface.py**: A command-line interface (CLI) client for interacting with the `launcher.py` server. It allows the user to:
-  - List files.
-  - Upload.
-  - Delete.
-  - Compile.
-  - Run programs.
+  1. List files.
+  2. Upload a file.
+  3. Delete a program.
+  4. Compile a program.
+  5. Execute a program.
+  6. Exit
 
 - **generate_certificate.py**: This script generates certificates and keys for the `integration_process` executable binary code. The certificates include:
   - CPU model.
