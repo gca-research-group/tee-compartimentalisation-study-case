@@ -19,7 +19,7 @@ A conceptual view of the application involved in the EAI is illustrated in Figur
 
 <img src="./figs/EAI.png" alt="Conceptual View of the EAI" width="300">
 
-*Figure 1: Conceptual View of the EAI.*
+*Figure 1: Conceptual View of the EAI. (Author: Carlos Molina-Jimenez)*
 
 
 The EAI integrates three main components: the store, taxi, and messaging services. These components act as servers, and the EAI operates as a client that sends requests to these services. The interaction between the EAI and the component applications follows a message-driven process:
