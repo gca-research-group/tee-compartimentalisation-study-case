@@ -133,3 +133,25 @@ The flow of interactions between the launcher, integration process, and the remo
 
 *Figure 3: Sequence diagram of the attestation and interaction process in the Integration Solution (Author: Rafael Zancan-Frantz, Applied Computing Research Group, Unijui University, Brazil).*
 
+
+The sequence diagram in **Figure 3** illustrates the process of attestation and interaction within the Integration Solution. This explanation outlines the steps followed by the launcher to manage the lifecycle of the integration process, from compartment creation to interaction with external services:
+
+1. **Launcher Initialization**: The launcher starts by invoking the `start()` operation, running outside the secure zone of the Morello Board (MB) operating system. This step prepares the system to handle various operations such as uploading, compiling, and executing programs.
+
+2. **Retrieving Source Code**: For each source code stored in the launcher's local database, the launcher retrieves the required source using the `retrieveProgram(id)` operation. This operation pulls the integration process source code from the database for the next stages.
+
+3. **Compartment Creation**: The launcher invokes the `createCompartment()` operation to create a secure execution environment (compartment) within the Morello Board. This provides a protected area where the integration process can safely run.
+
+4. **Compilation for TEE**: After retrieving the source code, the launcher compiles it for CHERI capabilities using the `compile(src)` operation. The result is an executable binary (`execPrc`) compatible with the trusted execution environment (TEE), ensuring secure execution.
+
+5. **Deploying the Integration Process**: The compiled executable binary is deployed into the secure compartment via the `deploy(execPrc)` operation. This generates attestable data (represented as a `HashMap`), which is essential for ensuring that the process is executing inside the compartment securely.
+
+6. **Key Pair Generation**: During the execution, the integration process generates a key pair using the `generateKeyPair()` function, which creates a public key (`puK`) and a private key (`prK`). These keys are used for secure communication with external services.
+
+7. **Certificate Generation**: The launcher gathers necessary data, including attestable information, and generates a certificate using the `generateAttestableDoc()` and `generateCertificate()` operations. The certificate is then signed by a trusted authority, such as Verisign, using the `sign()` operation, verifying the integrity and security of the process.
+
+8. **Public Key Exchange**: The launcher performs a key exchange between the integration process and the external services. The public keys of the services are retrieved via the `getPublicKey()` operation and exchanged with the integration process for secure communication.
+
+9. **Execution of the Integration Process**: Finally, the launcher invokes the `run()` operation, executing the compiled integration process inside the secure compartment. This ensures that all communication and interaction with external services (e.g., store, transport, messaging services) are securely conducted within the trusted execution environment.
+
+
