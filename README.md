@@ -50,7 +50,7 @@ To illustrate the practicality of our current implementation, we highlight that 
 
 # Functionality of the Components
 
-## 1) App-Store, App-Transport, and App-Whatsapp
+### 1) App-Store, App-Transport, and App-Whatsapp
 
 Each of these directories contains the following components:
 
@@ -61,7 +61,7 @@ Each of these directories contains the following components:
 - **Database**: The databases (`compras.db`, `transport_app.db`) are used to store relevant data for sales and transport bookings.
 - **Key Pair**: Each application has its own key pair (`cert.pem`, `priv.pem`), used for secure communication.
 
-## 2) Launcher
+### 2) Launcher
 
 - **launcher.py**: A server that manages the upload, compilation, and execution of programs inside a Trusted Execution Environment (TEE) within secure compartments. It runs on the operating system outside the TEE and handles the following tasks:
   - Manages upload requests.
@@ -80,7 +80,7 @@ Each of these directories contains the following components:
   - Hash of the executable binary code.
   - Signature added to the certificate for attestation.
 
-## Programs and Data Structure
+### Programs and Data Structure
 
 - **programs-data-base/sources**: Contains the source code of programs written in C (e.g. `integration_process.c`).
 - **programs-data-base/cheri-caps-executables**: Stores the executable binary codes generated for CHERI capabilities (cheri-caps).
