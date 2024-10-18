@@ -32,11 +32,15 @@ The EAI integrates three main components: the store, taxi, and messaging service
 6. Alice responds with an acceptance of the offer.
 
 
+## Implementation architecture of the EAI
+
 In the figure below, we assume that the implementation of the EAI is delegated to a third-party company (say, Bob's), and that the four involved parties do not necessarily trust each other. For example, the store, taxi, and messaging services are hesitant to provide their data to the EAI unless Bob implements mechanisms that ensure data protection during execution. This is a critical requirement that our implementation addresses. As shown in the following figure, we use an attestable to meet this requirement.
 
-![Enterprise Application Integration with Data Protection.](./figs/EAIwithATT.png)
+
+<img src="./figs/EAIwithATT.png" alt="Enterprise Application Integration with Data Protection" width="300">
 
 *Figure 2: Enterprise Application Integration with Data Protection. (Author: Carlos Molina-Jimenez)*
+
 
 In the figure, we use the following notation: the applications (store, taxi, and messaging services) execute on conventional platforms, represented by the "env" boxes with single lines. The attestable (att) is depicted by a double-lined box to indicate that it provides an execution environment that guarantees data protection. The Enterprise Application Integration (EAI) is deployed and executed inside the attestable to protect the data provided by the applications. It's important to note that the EAI acts as a client of the three servers (store, taxi, and messaging) and is programmed to periodically make requests.
 
