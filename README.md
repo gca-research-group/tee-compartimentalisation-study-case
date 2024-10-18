@@ -12,7 +12,7 @@ In the implemented case study, a store offers a promotion to its customers: if a
 We demonstrate how to execute an integration process within a TEE using Morello Board hardware located in Canada. The case study implements three mock digital services (apps) running on distinct remote servers in Brazil, along with an integration process (program) written and compiled for **CHERI capabilities (cheri-caps)**. The integration process runs inside a secure compartment.
 
 
-## Conceptual View of the Enterprise Application Integration (EAI)
+## Conceptual View of the EAI
 
 A conceptual view of the application involved in the EAI is illustrated in Figure 1.
 
@@ -42,7 +42,7 @@ In the Figure 2, we assume that the implementation of the EAI is delegated to a 
 *Figure 2: Enterprise Application Integration with Data Protection. (Author: Carlos Molina-Jimenez)*
 
 
-In the figure 2, we use the following notation: the applications (store, taxi, and messaging services) execute on conventional platforms, represented by the "env" boxes with single lines. The attestable (att) is depicted by a double-lined box to indicate that it provides an execution environment that guarantees data protection. The Enterprise Application Integration (EAI) is deployed and executed inside the attestable to protect the data provided by the applications. It's important to note that the EAI acts as a client of the three servers (store, taxi, and messaging) and is programmed to periodically make requests.
+In the figure 2, we use the following notation: the applications (store, taxi, and messaging services) execute on conventional platforms, represented by the "env" boxes with single lines. The attestable (att) is depicted by a double-lined box to indicate that it provides an execution environment that guarantees data protection. The EAI is deployed and executed inside the attestable to protect the data provided by the applications. It's important to note that the EAI acts as a client of the three servers (store, taxi, and messaging) and is programmed to periodically make requests.
 
 To illustrate the practicality of our current implementation, we highlight that the attestable is created on a Morello Board physically located in Toronto, while the applications run on conventional computers located at the Applied Computing Research Group of the University of Ijuí, Brazil.
 
@@ -63,7 +63,7 @@ Each of these directories contains the following components:
 
 ### 2) Launcher
 
-- **launcher.py**: A server that manages the upload, compilation, and execution of programs inside a Trusted Execution Environment (TEE) within secure compartments. It runs on the operating system outside the TEE and handles the following tasks:
+- **launcher.py**: A server that manages the upload, compilation, and execution of programs inside a TEE within secure compartments. It runs on the operating system outside the TEE and handles the following tasks:
   - Manages upload requests.
   - Compiles C code (`integration_process.c`) written with CHERI capabilities (cheri-caps).
   - Executes the compiled binary code inside a single compartment.
