@@ -75,7 +75,7 @@ Each of these directories contains the following components:
   3. Delete a program.
   4. Compile a program.
   5. Execute a program.
-  6. Exit
+  6. Exit.
 
 - **generate_certificate.py**: This script generates certificates and keys for the `integration_process` executable binary code. The certificates include:
   - CPU model.
