@@ -17,7 +17,7 @@ We demonstrate how to execute an integration process within a TEE using Morello 
 A conceptual view of the application involved in the EAI is illustrated in Figure 1.
 
 
-<img src="./figs/EAI.png" alt="Conceptual View of the EAI" width="300">
+<img src="./figs/EAI.png" alt="Conceptual View of the EAI" width="400">
 
 *Figure 1: Conceptual View of the EAI. (Author: Carlos Molina-Jimenez)*
 
@@ -34,39 +34,59 @@ The EAI integrates three main components: the store, taxi, and messaging service
 
 ## Implementation architecture of the EAI
 
-In the figure below, we assume that the implementation of the EAI is delegated to a third-party company (say, Bob's), and that the four involved parties do not necessarily trust each other. For example, the store, taxi, and messaging services are hesitant to provide their data to the EAI unless Bob implements mechanisms that ensure data protection during execution. This is a critical requirement that our implementation addresses. As shown in the following figure, we use an attestable to meet this requirement.
+In the Figure 2, we assume that the implementation of the EAI is delegated to a third-party company (say, Bob's), and that the four involved parties do not necessarily trust each other. For example, the store, taxi, and messaging services are hesitant to provide their data to the EAI unless Bob implements mechanisms that ensure data protection during execution. This is a critical requirement that our implementation addresses. As shown in the following figure, we use an attestable to meet this requirement.
 
 
-<img src="./figs/EAIwithATT.png" alt="Enterprise Application Integration with Data Protection" width="300">
+<img src="./figs/EAIwithATT.png" alt="Enterprise Application Integration with Data Protection" width="400">
 
 *Figure 2: Enterprise Application Integration with Data Protection. (Author: Carlos Molina-Jimenez)*
 
 
-In the figure, we use the following notation: the applications (store, taxi, and messaging services) execute on conventional platforms, represented by the "env" boxes with single lines. The attestable (att) is depicted by a double-lined box to indicate that it provides an execution environment that guarantees data protection. The Enterprise Application Integration (EAI) is deployed and executed inside the attestable to protect the data provided by the applications. It's important to note that the EAI acts as a client of the three servers (store, taxi, and messaging) and is programmed to periodically make requests.
+In the figure 2, we use the following notation: the applications (store, taxi, and messaging services) execute on conventional platforms, represented by the "env" boxes with single lines. The attestable (att) is depicted by a double-lined box to indicate that it provides an execution environment that guarantees data protection. The Enterprise Application Integration (EAI) is deployed and executed inside the attestable to protect the data provided by the applications. It's important to note that the EAI acts as a client of the three servers (store, taxi, and messaging) and is programmed to periodically make requests.
 
 To illustrate the practicality of our current implementation, we highlight that the attestable is created on a Morello Board physically located in Toronto, while the applications run on conventional computers located at the Applied Computing Research Group of the University of Ijuí, Brazil.
 
 
 
+# Functionality of the Components
 
-# Description
+## 1) App-Store, App-Transport, and App-Whatsapp
 
-1) App-Store, App-Transport and App-Whatsapp
-- Each of these directories contains an API (API1.py, API2.py, API3.py), a database (compras.db, transport_app.db), and a key pair (cert.pem, priv.pem).
-- The APIs are responsible for providing specific endpoints:
- - API1.py (App-Store): Provides the /api/sales endpoint to check the last sale.
- - API2.py (App-Transport): Provides the /api/trips endpoint to book a trip.
- - API3.py (App-Whatsapp): Provides the /send-message endpoint to send a confirmation message via WhatsApp.
-   
-2) Launcher
-- launcher.py: A server that manages the upload, compilation and execution of programs inside a TEE at compartments. It runs on the operating system outside the TEE and handles upload requests, compiles the C code (integration_process.c) written with cheri-caps, and allows the generated binary code to be executed inside a single compartment. It also creates and store the required certificates locally outside the TEE on the operating system.
-- command-line-interface.py: A command line client interface (CLI) for interacting with the server (launcher.py), allowing to list files, upload, delete, compile and run programs.
-- generate_certificate.py: Generates the certificates and keys for the integration_process executable binary code. It includes information such as CPU model, number of CPUs, memory addresses, hash of the executable binary code and its signature to the certificate.
-- Programs and Data:
- - programs-data-base/sources: Contains the program source codes written in C language (e.g. integration_process.c).
- - programs-data-base/cheri-caps-executables: Contains the executable binary codes generated for cheri-caps.
- - programs-data-base/certificates: Contains the attestables and the keys generated for the execution environment of each executable binary code.
- - attestable-data/signatures: Contains the signatures of the executable binary codes.
+Each of these directories contains the following components:
+
+- **API**: Each directory includes an API file (`API1.py`, `API2.py`, `API3.py`) responsible for providing specific endpoints:
+  - **API1.py (App-Store)**: Provides the `/api/sales` endpoint to check the last sale.
+  - **API2.py (App-Transport)**: Provides the `/api/trips` endpoint to book a trip.
+  - **API3.py (App-Whatsapp)**: Provides the `/send-message` endpoint to send a confirmation message via WhatsApp.
+- **Database**: The databases (`compras.db`, `transport_app.db`) are used to store relevant data for sales and transport bookings.
+- **Key Pair**: Each application has its own key pair (`cert.pem`, `priv.pem`), used for secure communication.
+
+## 2) Launcher
+
+- **launcher.py**: A server that manages the upload, compilation, and execution of programs inside a Trusted Execution Environment (TEE) within secure compartments. It runs on the operating system outside the TEE and handles the following tasks:
+  - Manages upload requests.
+  - Compiles C code (`integration_process.c`) written with CHERI capabilities (cheri-caps).
+  - Executes the compiled binary code inside a single compartment.
+  - Creates and stores the required certificates locally, outside the TEE.
+  
+- **command-line-interface.py**: A command-line interface (CLI) client for interacting with the `launcher.py` server. It allows the user to:
+  - List files.
+  - Upload, delete, compile, and run programs.
+
+- **generate_certificate.py**: This script generates certificates and keys for the `integration_process` executable binary code. The certificates include:
+  - CPU model.
+  - Number of CPUs.
+  - Memory addresses.
+  - Hash of the executable binary code.
+  - Signature added to the certificate for attestation.
+
+## Programs and Data Structure
+
+- **programs-data-base/sources**: Contains the source code of programs written in C (e.g. `integration_process.c`).
+- **programs-data-base/cheri-caps-executables**: Stores the executable binary codes generated for CHERI capabilities (cheri-caps).
+- **programs-data-base/certificates**: Contains the attestables and the keys generated for the secure execution environment of each executable binary code.
+- **attestable-data/signatures**: Stores the signatures of the executable binary codes for attestation purposes.
+
 
    
 # Execution sequence
