@@ -172,3 +172,10 @@ The following diagram illustrates the sequence of events in the execution of a w
 
 *Figure 5: Sequence diagram of the write operation executed by the EAI (Author: Rafael Zancan-Frantz, Applied Computing Research Group, Unijui University, Brazil).*
 
+
+## Corresponding Author
+
+**Regis Rodolfo Schuch**  
+*Applied Computing Research (GCA) Group, Unijui University, Brazil*  
+[regis.schuch@unijui.edu.br](mailto:regis.schuch@unijui.edu.br)
+
