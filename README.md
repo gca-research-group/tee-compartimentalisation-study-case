@@ -125,7 +125,7 @@ Each of these directories contains the following components:
 
 # Attestation and Set-Up of the Attestable
 
-The integration process compilation and execution is managed by a launcher program that operates outside the trusted execution environment (TEE) but remains within the Morello Board operating system. In this case study, the integration process functions as a client, invoking remote servers represented by digital service applications (apps).
+The integration process compilation and execution is managed by a launcher program that operates outside the TEE but remains within the Morello Board operating system. In this case study, the integration process functions as a client, invoking remote servers represented by digital service applications (apps).
 
 The flow of interactions between the launcher, integration process, and the remote servers is depicted in the sequence diagram shown in Figure 3.
 
@@ -133,7 +133,7 @@ The flow of interactions between the launcher, integration process, and the remo
 
 *Figure 3: Sequence diagram of the attestation and interaction process in the Integration Solution (Author: Rafael Zancan-Frantz, Applied Computing Research Group, Unijui University, Brazil).*
 
-The sequence diagram in **Figure 3** provides a detailed view of the attestation process and the interaction between the launcher, integration process, and external services within the Integration Solution. Below is a structured explanation of the steps involved, from compartment creation to interaction with external services:
+The sequence diagram in Figure 3 provided a detailed view of the attestation process and the interaction between the launcher, integration process, and external services within the Integration Solution. Below is a structured explanation of the steps involved, from compartment creation to interaction with external services:
 
 1. **Launcher Initialization**: The launcher is initialized by invoking the `start()` operation, which runs outside the secure zone of the Morello Board operating system. This prepares the system to handle various operations such as uploading, compiling, and executing programs.
 
