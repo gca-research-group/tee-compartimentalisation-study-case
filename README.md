@@ -12,6 +12,23 @@ In the implemented case study, a store offers a promotion to its customers: if a
 We demonstrate how to execute an integration process within a TEE using Morello Board hardware located in Canada. The case study implements three mock digital services (apps) running on distinct remote servers in Brazil, along with an integration process (program) written and compiled for **CHERI capabilities (cheri-caps)**. The integration process runs inside a secure compartment.
 
 
+## Conceptual View of the Enterprise Application Integration (EAI)
+
+A conceptual view of the application involved in the EAI is illustrated in Figure 1.
+
+![Figure 1: Conceptual View of the EAI](EAI.png)
+
+The EAI integrates three main components: the store, taxi, and messaging services. These components act as servers, and the EAI operates as a client that sends requests to these services. The interaction between the EAI and the component applications follows a message-driven process:
+
+1. The EAI requests a copy of the bill for a store's client, for example, Alice.
+2. The store responds with the bill amount. Let's assume the bill is above £150, which entitles Alice to a courtesy taxi ride.
+3. The EAI sends a request to the taxi service to arrange a ride for Alice.
+4. The taxi service responds with the taxi's number and the driver’s name, confirming that a taxi is ready for boarding.
+5. The EAI then sends a message to Alice, offering her the taxi service.
+6. Alice responds with an acceptance of the offer.
+
+
+
 
 
 
