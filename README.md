@@ -94,25 +94,45 @@ Each of these directories contains the following components:
 - **programs-data-base/certificates**: Contains the attestables and the keys generated for the secure execution environment of each executable binary code.
 - **attestable-data/signatures**: Stores the signatures of the executable binary codes for attestation purposes.
 
-
    
-# Execution sequence
+### Execution Sequence
 
-1) Launcher initialisation
- - The launcher is started by running launcher.py.
- - The launcher is ready to receive requests to upload, compile and run programmes.
-2) Code upload
- - The CLI (command-line-interface.py) is used to upload a C program (ex. integration_process.c) to the Morello Board Environment.
- - The launcher saves the uploaded file in the programs-data-base/sources folder and updates the file_database.json.
-3) Code compilation
- - The request to compile the source code is made via the CLI.
- - The launcher compiles the source code for cheri caps and saves the executable binary code in folder programs-data-base/cheri-caps-executables.
- - A corresponding certificate directory is created inside the folder programs-data-base/certificates.
-4) Code execution
- - The compiled binary code is executed via the CLI.
- - The launcher executes the binary and returns the output.
-5) Certificate generation
- - During execution, the integration_process.c calls the generate_certificate.py located inside folder attestable-data.
- - The generate_certificate.py script generates the corresponding keys and certificates for the running executable binary code, including information such as CPU model, number of CPUs, and memory addresses.
-6) Interaction with External APIs
- - The integration_process.c makes HTTPS calls to the defined APIs (API1_URL, API2_URL, API3_URL), using OpenSSL to check sales, book trips and send confirmation messages via WhatsApp.
+1. **Launcher Initialisation**
+   - The launcher is started by running `launcher.py`.
+   - Once started, the launcher is ready to receive requests to upload, compile, and run programs.
+
+2. **Code Upload**
+   - The CLI (`command-line-interface.py`) is used to upload a C program (e.g. `integration_process.c`) to the Morello Board environment.
+   - The launcher saves the uploaded file in the `programs-data-base/sources` folder and updates the `file_database.json`.
+
+3. **Code Compilation**
+   - A request to compile the source code is made via the CLI.
+   - The launcher compiles the source code for CHERI capabilities and saves the executable binary code in the folder `programs-data-base/cheri-caps-executables`.
+   - A corresponding certificate directory is created inside the folder `programs-data-base/certificates`.
+
+4. **Code Execution**
+   - The compiled binary code is executed via the CLI.
+   - The launcher runs the binary and returns the output.
+
+5. **Certificate Generation**
+   - During execution, the `integration_process.c` calls the `generate_certificate.py` script located inside the folder `attestable-data`.
+   - The `generate_certificate.py` script generates the corresponding keys and certificates for the running executable binary code, including information such as CPU model, number of CPUs, and memory addresses.
+
+6. **Interaction with External APIs**
+   - The `integration_process.c` makes HTTPS calls to the defined APIs (`API1_URL`, `API2_URL`, `API3_URL`), using OpenSSL to check sales, book trips, and send confirmation messages via WhatsApp.
+
+
+
+
+
+
+ ## Attestation and Set-Up of the Attestable
+
+The integration process compilation and execution is managed by a launcher program that runs outside the trusted execution environment but still inside the Morello Board operating system. In this case study, the integration process acts as a client by invoking remote servers represented by the digital service apps.
+
+The flow of interactions between the launcher, integration process, and the remote servers is illustrated in the sequence diagram shown in **Figure 3**.
+
+![Sequence Diagram](./figs/sequence_diagram.png)
+
+*Figure 3: Sequence diagram of the attestation and interaction process in the Integration Solution.*
+
