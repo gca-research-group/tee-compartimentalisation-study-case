@@ -1,6 +1,24 @@
-# Case study of compartmentalisation-based TEE
+<h1 style="font-size: 2em;">A use-case for attestable evaluation</h1>
 
-  This repository contains the implementation of a study case to demonstrate how to run an integration process inside a trusted execution environment (TEE) using a Morello Board experimental hardware located in Canada. Basically, this case study implements three mock digital services (apps) that run in distinct remore servers in Brazil and an integration process (program) written and compiled for cheri-caps that runs inside a single compartment. The integration process compilation and execution is managed by a laucher program that runs outside the trusted execution environment but still inside the Morello Board operating system. In this case study, our integration process program acts as a client by invoking the remote servers represented by the digital services apps.
+This repository focuses on evaluating two key attestable properties:
+
+- The operation of the cloud-based attestation procedure discussed in the [attestablelauncher repository](https://github.com/CAMB-DSbD/attestablelauncher).
+- Some performance properties of the attestables created on a Morello Board using the library compartmentalisation tool.
+
+## Enterprise Application Integration (EAI) Solution
+
+To explore these properties, we have implemented an **Enterprise Application Integration (EAI)** solution, also referred to as an **Integration Solution**, which operates as follows:
+
+This repository contains a case study that demonstrates how to run an integration process inside a trusted execution environment (TEE) using experimental Morello Board hardware located in Canada. The case study implements three mock digital services (apps) running on distinct remote servers in Brazil, along with an integration process (program) written and compiled for CHERI capabilities (cheri-caps). The integration process runs inside a secure compartment.
+
+The compilation and execution of the integration process are managed by a launcher program, which runs outside the trusted execution environment but within the Morello Board's operating system. In this scenario, the integration process acts as a client by invoking remote servers, represented by the digital service apps.
+
+## Use Case: Store Promotion with App-Based Transportation
+
+In this use case, the store offers a promotion to customers: if a customer purchases more than $150.00, they can return home in an app-based car service, paid for by the store. This business strategy integrates the store’s operations with an app-based transportation service, promoting sales and enhancing customer convenience through seamless service integration.
+
+The integration process inside the TEE demonstrates how digital services from different servers can securely interact with each other through a trusted environment, enabling attestation and performance evaluation on the Morello Board platform.
+
 
 # Description
 
