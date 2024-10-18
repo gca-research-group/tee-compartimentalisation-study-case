@@ -20,6 +20,7 @@ A conceptual view of the application involved in the EAI is illustrated in Figur
 <img src="./figs/EAI.png" alt="Conceptual View of the EAI" width="400">
 
 *Figure 1: Conceptual View of the EAI.*
+
 *Author: Carlos Molina-Jimenez, Computer Lab, University of Cambridge. CAMB project.*
 
 
@@ -40,7 +41,8 @@ In the Figure 2, we assume that the implementation of the EAI is delegated to a 
 
 <img src="./figs/EAIwithATT.png" alt="Enterprise Application Integration with Data Protection" width="400">
 
-*Figure 2: Enterprise Application Integration with Data Protection.*  
+*Figure 2: Enterprise Application Integration with Data Protection.* 
+
 *Author: Carlos Molina-Jimenez, Computer Lab, University of Cambridge. CAMB project.*
 
 
@@ -63,6 +65,7 @@ Each of these directories contains the following components:
 - **Database**: The databases (`compras.db`, `transport_app.db`) are used to store relevant data for sales and transport bookings.
 - **Key Pair**: Each application has its own key pair (`cert.pem`, `priv.pem`), used for secure communication.
 
+
 ### 2) Launcher
 
 - **launcher.py**: A server that manages the upload, compilation, and execution of programs inside a TEE within secure compartments. It runs on the operating system outside the TEE and handles the following tasks:
@@ -79,7 +82,6 @@ Each of these directories contains the following components:
     4. Compile a program.
     5. Execute a program.
     6. Exit.
-
 
 
 - **generate_certificate.py**: This script generates certificates and keys for the `integration_process` executable binary code. The certificates include:
@@ -125,15 +127,15 @@ Each of these directories contains the following components:
 
 
 
-
  # Attestation and Set-Up of the Attestable
 
 The integration process compilation and execution is managed by a launcher program that runs outside the trusted execution environment but still inside the Morello Board operating system. In this case study, the integration process acts as a client by invoking remote servers represented by the digital service apps.
 
 The flow of interactions between the launcher, integration process, and the remote servers is illustrated in the sequence diagram shown in Figure 3.
 
-![Sequence Diagram](./figs/sequence_diagram.png)
+![Sequence Diagram](./figs/launcher.png)
 
 *Figure 3: Sequence diagram of the attestation and interaction process in the Integration Solution.*  
+
 *Author: Rafael Zancan-Frantz, Applied Computing Research Group, Unijui University, Brazil.*
 
