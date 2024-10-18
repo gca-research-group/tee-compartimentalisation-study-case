@@ -85,6 +85,7 @@ Each of these directories contains the following components:
 
 
 
+
 - **generate_certificate.py**: This script generates certificates and keys for the `integration_process` executable binary code. The certificates include:
   - CPU model.
   - Number of CPUs.
