@@ -151,6 +151,24 @@ The sequence diagram in Figure 3 provided a detailed view of the attestation pro
 
 8. **Public Key Exchange**: The launcher performs a key exchange between the integration process and external services. The public keys of the services are retrieved using the `getPublicKey()` operation and exchanged with the integration process for secure communication.
 
-9. **Execution of the Integration Process**: Finally, the launcher invokes the `run()` operation, executing the compiled integration process within the secure compartment. This ensures that all communication and interactions with external services (e.g., store, transport, and messaging services) are securely conducted within the trusted execution environment.
+9. **Execution of the Integration Process**: Finally, the launcher invokes the `run()` operation, executing the compiled integration process within the secure compartment. This ensures that all communication and interactions with external services (e.g., store, transport, and messaging services) are securely conducted within the TEE.
 
+
+
+# Execution of a Read Operation
+
+The following diagram illustrates the sequence of events in the execution of a read operation that the EAI performs against one of the applications, such as the storage service, to request data.
+
+![Read Operation Diagram](./figs/read.png)
+
+*Figure 4: Sequence diagram of the read operation executed by the EAI (Author: Rafael Zancan-Frantz, Applied Computing Research Group, Unijui University, Brazil).*
+
+
+# Execution of a Write Operation
+
+The following diagram illustrates the sequence of events in the execution of a write operation that the EAI performs to send data to one of the applications. For instance, the EAI executes a write operation against the **msg** application to notify it that a client is ready for a taxi ride home.
+
+![Write Operation Diagram](./figs/write.png)
+
+*Figure 5: Sequence diagram of the write operation executed by the EAI (Author: Rafael Zancan-Frantz, Applied Computing Research Group, Unijui University, Brazil).*
 
