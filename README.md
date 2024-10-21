@@ -159,7 +159,7 @@ The sequence diagram in Figure 3 represents the attestation and interaction proc
 
 8. **Registering the Service's Public Key**: After the key exchange, the public keys of the digital services are securely stored via the `putServicePublicKey(srvId, puK_)` operation. This ensures that the keys are safely registered for communication with the **Integration Process**.
 
-9. **Certificate Generation and Signing**: The launcher generates the final attestable certificate using the `generateCertificate(doc)` operation. This certificate is signed by a root certificate authority, such as Verisign, using the `sign(cert)` operation to verify the integrity and authenticity of the process.
+9. **Certificate Generation and Signing**: The launcher generates the final attestable certificate using the `generateCertificate(doc)` operation. This certificate is signed by a root certificate authority, such as Verisign, using the `sign(certificate)` operation to verify the integrity and authenticity of the process.
 
 10. **Execution of the Integration Process**: Finally, the launcher invokes the `run()` operation, executing the compiled **Integration Process** within the secure compartment. At this point, the **Integration Process** can securely interact with external services (e.g., store, transportation, or messaging apps), ensuring data protection and the attestation of the trusted execution environment.
 
