@@ -72,14 +72,14 @@ Each of these directories contains the following components:
   
 - **command-line-interface.py**: A command-line interface (CLI) client for interacting with the `launcher.py` server. It allows the user to:
 
-<ol>
-  <li>List files.</li>
-  <li>Upload a file.</li>
-  <li>Delete a program.</li>
-  <li>Compile a program.</li>
-  <li>Execute a program.</li>
-  <li>Exit.</li>
-</ol>
+  <ol>
+    <li>List files.</li>
+    <li>Upload a file.</li>
+    <li>Delete a program.</li>
+    <li>Compile a program.</li>
+    <li>Execute a program.</li>
+    <li>Exit.</li>
+  </ol>
 
 
 
