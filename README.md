@@ -189,7 +189,7 @@ The sequence diagram in Figure 5 provides a structured view of how data is secur
 
 10. **Decryption of the Data**: The **Integration Process** uses its private key (`prK`) to decrypt the received data. Once decrypted, the integration process gains access to the data set, completing the read operation.
 
-This sequence of interaction ensures that the data transferred between the **Integration Process** and the **Digital Service** remains encrypted and protected, with the **Launcher** acting as a facilitator but without access to the raw data. Encryption and certificate-based verification ensure the security of the operation, guaranteeing that only authorised integration processes can read and decrypt the data.
+This sequence of interaction ensures that the data transferred between the **Integration Process** and the **Digital Service** remains encrypted and protected, with the **Launcher** acting as a facilitator but without access to the raw data. Encryption and attestable-based verification ensure the security of the operation, guaranteeing that only authorised integration processes can read and decrypt the data.
 
 
 # Execution of a Write Operation
