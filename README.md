@@ -167,7 +167,7 @@ The sequence diagram in Figure 3 represents the attestation and interaction proc
 
 - The secure compartment acts as a critical component in the execution, ensuring that all interactions and data exchanges remain encrypted and protected.
 - The sequence of events includes not only the setup of the integration process but also important steps such as key exchange, certificate generation, and secure data transfer between services.
-- The role of the root of trust (Verisign) ensures that the certificates used during the process are valid and can be trusted by external services.
+- The role of the root of trust (Verisign) ensures that the certificates used during the process are valid and can be trusted by external digital services.
 
 
 # Execution of a Read Operation
