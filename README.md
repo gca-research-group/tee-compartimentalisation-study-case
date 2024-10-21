@@ -195,11 +195,35 @@ This interaction ensures that the data transferred between the **Integration Pro
 
 # Execution of a Write Operation
 
-The following diagram illustrates the sequence of events in the execution of a write operation that the EAI performs to send data to one of the applications. For instance, the EAI executes a write operation against the **msg** application to notify it that a client is ready for a taxi ride home.
+The integration process is responsible for securely sending processed data within the integration flow to integrated digital services. This process is carried out through a write operation, with the **Integration Process** acting as the client and the **Digital Service** as the server. The diagram in **Figure 5** illustrates the sequence of events during the execution of a write operation that the EAI performs to send data to one of the applications, such as a messaging service. For instance, the EAI executes a write operation to the messaging application to notify it that a client is ready for a taxi ride home.
 
-![Write Operation Diagram](./figs/write.png)
+![Sequence Diagram of the Write Operation](./figs/write.png)
 
-*Figure 5: Sequence diagram of the write operation executed by the EAI (Author: Rafael Zancan-Frantz, Applied Computing Research Group, Unijui University, Brazil).*
+*Figure 5: Sequence diagram of the write operation in the Integration Solution (Author: Rafael Zancan-Frantz, Applied Computing Research Group, Unijui University, Brazil).*
+
+The sequence diagram in **Figure 5** provides a structured view of how data is securely transmitted from the **Integration Process** to a **Digital Service**. Below is an explanation of the steps involved in the write operation:
+
+1. **Initiating the Write Request**: The **Integration Process** initiates a write request, specifying the destination **Digital Service**, identified by `srvId`, and the data to be sent.
+
+2. **Retrieving the Public Key of the Service**: The **Integration Process** retrieves the public key (`puK_`) of the **Digital Service** using the `getServicePublicKey(srvId)` operation. This public key will be used to encrypt the data, ensuring secure transmission.
+
+3. **Encrypting the Data**: The data is encrypted using the public key (`puK_`) retrieved in the previous step. The result is an encrypted dataset (`dataEnc`), which will be securely transmitted to the service.
+
+4. **Sending the Encrypted Data**: The **Integration Process** sends the encrypted data (`dataEnc`) to the **Launcher** via the `write(srvId, progId, dataEnc)` operation. The `progId` identifies the integration process.
+
+5. **Service Lookup**: The **Launcher** searches for the digital service using the `lockupService(srvId)` operation to locate the corresponding **Digital Service** for this request.
+
+6. **Retrieving the Certificate**: The **Launcher** retrieves the signed certificate of the **Integration Process** using the `getCertificate(progId)` operation, which will be used to verify the integrity of the process.
+
+7. **Sending the Encrypted Data**: The **Launcher** securely sends the encrypted data and the signed certificate to the **Digital Service** using the `post(signedCert, dataEnc)` operation.
+
+8. **Verifying the Certificate**: The **Digital Service** verifies the provided certificate using the `verifyCertificate(signedCert)` operation. If the certificate is valid (`r == true`), the service proceeds to process the data.
+
+9. **Decrypting the Data**: The **Digital Service** decrypts the encrypted data (`dataEnc`) using its private key (`prK_`), recovering the original dataset (`Dataset`).
+
+10. **Storing the Data**: The decrypted data is locally stored in the service using the `storeLocalData(data)` operation, completing the write operation.
+
+This sequence ensures that the data sent from the **Integration Process** to the **Digital Service** is encrypted and protected during transmission, with the **Launcher** acting as the communication facilitator without having access to the data. The encryption and attestable-based verification guarantee that only authorised and trusted integration processes can write data to the digital service.
 
 
 
