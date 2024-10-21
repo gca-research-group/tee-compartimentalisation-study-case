@@ -177,6 +177,20 @@ The following diagram illustrates the sequence of events in the execution of a w
 *Figure 5: Sequence diagram of the write operation executed by the EAI (Author: Rafael Zancan-Frantz, Applied Computing Research Group, Unijui University, Brazil).*
 
 
+
+## Acknowledgements
+
+Special thanks to **Carlos Molina-Jimenez**  
+([carlos.molina@cl.cam.ac.uk](mailto:carlos.molina@cl.cam.ac.uk))  
+from the Computer Lab, University of Cambridge, for providing the architecture images, helping to identify the research problem, and following the development as part of the CAMB project.
+
+The UML diagrams were provided by **Rafael Z. Frantz**  
+([rzfrantz@unijui.edu.br](mailto:rzfrantz@unijui.edu.br)),  
+also from the Applied Computing Research Group, Unijui University, Brazil,  
+who, along with **Carlos Molina-Jimenez**, served as mentor and guide throughout the project.
+
+
+
 ## Corresponding Author
 
 **Regis Rodolfo Schuch**  
