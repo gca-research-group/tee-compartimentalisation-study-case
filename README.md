@@ -25,7 +25,7 @@ A conceptual view of the application involved in the EAI is illustrated in Figur
 The EAI integrates three main components: the store, taxi, and messaging services. These components act as servers, and the EAI operates as a client that sends requests to these services. The interaction between the EAI and the component applications follows a message-driven process:
 
 1. The EAI requests a copy of the bill for a store's client, for example, Alice.
-2. The store responds with the bill amount. Let's assume the bill is above £150, which entitles Alice to a courtesy taxi ride.
+2. The store responds with the bill amount. Let's assume the bill is above $150.00, which entitles Alice to a courtesy taxi ride.
 3. The EAI sends a request to the taxi service to arrange a ride for Alice.
 4. The taxi service responds with the taxi's number and the driver’s name, confirming that a taxi is ready for boarding.
 5. The EAI then sends a message to Alice, offering her the taxi service.
@@ -42,7 +42,7 @@ In the Figure 2, we assume that the implementation of the EAI is delegated to a 
 *Figure 2: Enterprise Application Integration with Data Protection (Author: Carlos Molina-Jimenez, Computer Lab, University of Cambridge. CAMB project).*
 
 
-In the figure 2, we use the following notation: the applications (store, taxi, and messaging services) execute on conventional platforms, represented by the "env" boxes with single lines. The attestable (att) is depicted by a double-lined box to indicate that it provides an execution environment that guarantees data protection. The EAI is deployed and executed inside the attestable to protect the data provided by the applications. It's important to note that the EAI acts as a client of the three servers (store, taxi, and messaging) and is programmed to periodically make requests.
+In the Figure 2, we use the following notation: the applications (store, taxi, and messaging services) execute on conventional platforms, represented by the "env" boxes with single lines. The attestable (att) is depicted by a double-lined box to indicate that it provides an execution environment that guarantees data protection. The EAI is deployed and executed inside the attestable to protect the data provided by the applications. It's important to note that the EAI acts as a client of the three servers (store, taxi, and messaging) and is programmed to periodically make requests.
 
 To illustrate the practicality of our current implementation, we highlight that the attestable is created on a Morello Board physically located in Toronto, while the applications run on conventional computers located at the Applied Computing Research Group of the University of Ijuí, Brazil.
 
@@ -72,12 +72,12 @@ Each of these directories contains the following components:
   
 - **command-line-interface.py**: A command-line interface (CLI) client for interacting with the `launcher.py` server. It allows the user to:
 
-    1. List files.
-    2. Upload a file.
-    3. Delete a program.
-    4. Compile a program.
-    5. Execute a program.
-    6. Exit.
+  1 - List files.
+  2 - Upload a file.
+  3 - Delete a program.
+  4 - Compile a program.
+  5 - Execute a program.
+  6 - Exit.
 
 
 - **generate_certificate.py**: This script generates certificates and keys for the `integration_process` executable binary code. The certificates include:
