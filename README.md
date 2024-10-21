@@ -145,9 +145,9 @@ The sequence diagram in Figure 3 provided a detailed view of the attestation pro
 
 3. **Compartment Creation**: The launcher calls the `createCompartment()` operation to create a secure execution environment (compartment) on the Morello Board. This compartment ensures that the integration process runs within a protected environment.
 
-4. **Compilation for TEE**: After retrieving the source code, the launcher compiles it for CHERI capabilities using the `compile(src)` operation. The result is an executable binary (`execPrc`) that is compatible with the trusted execution environment, ensuring secure execution.
+4. **Compilation for TEE**: After retrieving the source code, the launcher compiles it for CHERI capabilities using the `compile(src)` operation. The result is an executable binary (`exe`) that is compatible with the trusted execution environment, ensuring secure execution.
 
-5. **Deploying the Integration Process**: The compiled executable binary is deployed into the secure compartment through the `deploy(execPrc)` operation. This step generates attestable data, represented as a `HashMap`, which is critical for ensuring that the process runs securely within the compartment.
+5. **Deploying the Integration Process**: The compiled executable binary is deployed into the secure compartment through the `deploy(exe)` operation. This step generates attestable data, represented as a `HashMap`, which is critical for ensuring that the process runs securely within the compartment.
 
 6. **Key Pair Generation**: During execution, the integration process generates a key pair using the `generateKeyPair()` function, producing a public key (`puK`) and a private key (`prK`). These keys facilitate secure communication with external services.
 
