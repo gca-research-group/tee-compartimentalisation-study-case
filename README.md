@@ -161,35 +161,36 @@ The sequence diagram in Figure 3 provided a detailed view of the attestation pro
 
 # Execution of a Read Operation
 
-The integration process is responsible for securely retrieving data from integrated digital services. This process is executed through a read operation, with the **Integration Process** acting as the client and the **Digital Service** as the server. The diagram in Figure 5 illustrates the sequence of events during the execution of a read operation that the EAI performs on one of the applications, such as the storage service, to request data.
+The integration process is responsible for securely reading data from integrated digital services. This is accomplished through a read operation, with the **Integration Process** acting as the client and the **Digital Service** as the server. The sequence diagram in Figure 5 illustrates the sequence of events in the execution of a read operation that the EAI performs against one of the applications, such as the storage service, to request data.
 
 ![Sequence Diagram of the Read Operation](./figs/read.png)
 
 *Figure 5: Sequence diagram of the read operation in the Integration Solution (Author: Rafael Zancan-Frantz, Applied Computing Research Group, Unijuí University, Brazil).*
 
-The sequence diagram in Figure 5 provides a structured view of how data is securely retrieved from a digital service. Below is an explanation of the steps involved in the read operation:
+The sequence diagram in Figure 5 provides a structured view of how data is securely retrieved from a digital service. Below is an explanation of the key steps involved in the read operation:
 
-1. **Initiation of the Read Request**: The **Integration Process** initiates a read request to retrieve data from the **Digital Service**, identified by `srvId`. The goal is to obtain the data set (`Dataset`).
+1. **Start of the Read Request**: The **Integration Process** initiates a read request to retrieve data from the **Digital Service**, identified by `srvId`. The goal is to obtain the dataset (`Dataset`).
 
 2. **Request for Encrypted Data**: The **Integration Process** sends a request to the **Launcher**, asking for encrypted data (`EncDataset`) from the **Digital Service**. The `srvId` and `progId` are used to identify the digital service and the integration process.
 
-3. **Service Lookup**: The **Launcher** locates the digital service using the service ID (`srvId`) and prepares to request the data.
+3. **Service Lookup**: The **Launcher** locates the digital service using the service ID (`srvId`) and establishes a connection to it, typically via a RESTful service, using the `lockupService(srvId)` function.
 
-4. **Certificate Retrieval**: The **Launcher** retrieves the signed certificate from the **Integration Process**, which is required to verify that the integration process is running in a trusted execution environment.
+4. **Retrieval of Signed Certificate**: The **Launcher** retrieves the signed certificate corresponding to the integration process by calling the `getCertificate(progId)` function. This certificate is necessary to verify that the integration process is running in a trusted execution environment.
 
-5. **Public Key Retrieval**: The **Launcher** retrieves the public key (`puK`) associated with the **Integration Process**, which will be used for securely encrypting and decrypting the data.
+5. **Obtaining the Public Key**: The **Launcher** then calls the `getProgramPublicKey(progId)` function to retrieve the public key (`puK`) of the **Integration Process**, which will be used for encrypting and decrypting the data.
 
-6. **Data Request to the Service**: The **Launcher** sends a secure request to the **Digital Service**, providing the signed certificate and the public key (`puK`).
+6. **Requesting Data from the Service**: The **Launcher** sends a secure request to the **Digital Service**, providing both the signed certificate and the public key (`puK`), through the `request(signedCert, puK)` function.
 
-7. **Certificate Verification**: The **Digital Service** verifies the provided certificate. If the certificate is valid (`r == true`), the service proceeds to retrieve the requested data.
+7. **Certificate Verification**: The **Digital Service** verifies the certificate using the `verifyCertificate(signedCert)` function. If the certificate is valid (`r == true`), the service proceeds to retrieve the requested data.
 
-8. **Data Retrieval and Encryption**: The **Digital Service** retrieves the requested data (`Dataset`) from its local storage and encrypts it using the public key (`puK`) to ensure that only the **Integration Process** can decrypt and access the data.
+8. **Data Retrieval and Encryption**: The **Digital Service** retrieves the requested dataset (`Dataset`) from its local storage by calling the `retrieveLocalData()` function and encrypts it using the public key (`puK`), through the `encrypt(puK, data)` function, to ensure that only the **Integration Process** can decrypt and access the data.
 
-9. **Transmission of Encrypted Data**: The **Digital Service** sends the encrypted data set (`dataEnc`) back to the **Launcher**, which then forwards it to the **Integration Process**.
+9. **Sending Encrypted Data**: The **Digital Service** sends the encrypted dataset (`dataEnc`) back to the **Launcher**, which forwards it to the **Integration Process**.
 
-10. **Decryption of the Data**: The **Integration Process** uses its private key (`prK`) to decrypt the received data. Once decrypted, the integration process gains access to the data set, completing the read operation.
+10. **Data Decryption**: The **Integration Process** uses its private key (`prK`) to decrypt the encrypted dataset. Once decrypted, the integration process has access to the dataset, completing the read operation by calling the `decrypt(prK, dataEnc)` function.
 
-This sequence of interaction ensures that the data transferred between the **Integration Process** and the **Digital Service** remains encrypted and protected, with the **Launcher** acting as a facilitator but without access to the raw data. Encryption and attestable-based verification ensure the security of the operation, guaranteeing that only authorised integration processes can read and decrypt the data.
+This interaction ensures that the data transferred between the **Integration Process** and the **Digital Service** remains encrypted and protected, with the **Launcher** acting as a facilitator but never having access to the actual data. The encryption and attestation-based verification ensure the security of the operation, confirming that only authorised integration processes can read and decrypt the data.
+
 
 
 # Execution of a Write Operation
