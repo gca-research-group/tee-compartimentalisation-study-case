@@ -137,7 +137,7 @@ The sequence diagram in Figure 3 represents the attestation and interaction proc
 *Figure 3: Sequence diagram of the attestation and interaction process in the Integration Solution (Author: Rafael Zancan-Frantz, Applied Computing Research Group, Unijui University, Brazil).*
 
 
-#### Detailed Explanation of the Sequence Diagram:
+#### Explanation of the Sequence Diagram:
 
 1. **Launcher Initialization**: The launcher begins the process by invoking the `start()` operation, which prepares the system to handle various operations, such as retrieving source code, compiling, and executing programs.
 
