@@ -161,13 +161,13 @@ The sequence diagram in Figure 3 provided a detailed view of the attestation pro
 
 # Execution of a Read Operation
 
-The integration process is responsible for securely reading data from integrated digital services. This is accomplished through a read operation, with the **Integration Process** acting as the client and the **Digital Service** as the server. The sequence diagram in Figure 5 illustrates the sequence of events in the execution of a read operation that the EAI performs against one of the applications, such as the storage service, to request data.
+The integration process is responsible for securely reading data from integrated digital services. This is accomplished through a read operation, with the **Integration Process** acting as the client and the **Digital Service** as the server. The sequence diagram in Figure 4 illustrates the sequence of events in the execution of a read operation that the EAI performs against one of the applications, such as the storage service, to request data.
 
 ![Sequence Diagram of the Read Operation](./figs/read.png)
 
-*Figure 5: Sequence diagram of the read operation in the Integration Solution (Author: Rafael Zancan-Frantz, Applied Computing Research Group, Unijuí University, Brazil).*
+*Figure 4: Sequence diagram of the read operation in the Integration Solution (Author: Rafael Zancan-Frantz, Applied Computing Research Group, Unijuí University, Brazil).*
 
-The sequence diagram in Figure 5 provides a structured view of how data is securely retrieved from a digital service. Below is an explanation of the key steps involved in the read operation:
+The sequence diagram in Figure 4 provides a structured view of how data is securely retrieved from a digital service. Below is an explanation of the key steps involved in the read operation:
 
 1. **Start of the Read Request**: The **Integration Process** initiates a read request to retrieve data from the **Digital Service**, identified by `srvId`. The goal is to obtain the dataset (`Dataset`).
 
