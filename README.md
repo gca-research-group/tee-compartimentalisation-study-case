@@ -72,6 +72,7 @@ Each of these directories contains the following components:
   
 - **command-line-interface.py**: A command-line interface (CLI) client for interacting with the `launcher.py` server. It allows the user to:
 
+<div style="margin-left: 20px;">
   <ol>
     <li>List files.</li>
     <li>Upload a file.</li>
@@ -80,6 +81,7 @@ Each of these directories contains the following components:
     <li>Execute a program.</li>
     <li>Exit.</li>
   </ol>
+</div>
 
 
 
