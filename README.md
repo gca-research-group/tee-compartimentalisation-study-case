@@ -1,4 +1,4 @@
-<h1 style="font-size: 2em;">A use-case for attestable evaluation</h1>
+<h1 style="font-size: 2em;">A Use-case for Integrating Digital Services with Data Protection at Run Time</h1>
 
 This repository focuses on evaluating two key attestable properties:
 
