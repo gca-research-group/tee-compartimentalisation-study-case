@@ -1,9 +1,4 @@
 ##
-# Programmer   : Regis Rodolfo Schuch
-# Date         : 10 June 2024
-#              : Applied Computing Research Group, Unijui University, Brazil
-#              : regis.schuch@unijui.edu.br
-#              :
 # Title        : API2.py 
 #              :
 # Description  : The API2.py code defines a RESTful API using the Flask framework to manage journeys in a transport 
