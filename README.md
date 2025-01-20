@@ -141,7 +141,7 @@ The sequence diagram in Figure 3 represents the attestation and interaction proc
 
 ![Sequence Diagram](./figs/launcher.png)
 
-*Figure 3: Sequence diagram of the attestation and interaction process in the Integration Solution.*
+*Figure 3: Deploying and Executing Integration Processes Inside a TEE.*
 <!--(Author: Rafael Zancan-Frantz, Applied Computing Research Group, Unijui University, Brazil).-->
 
 
@@ -184,7 +184,7 @@ The integration process is responsible for securely reading data from integrated
 
 ![Sequence Diagram of the Read Operation](./figs/read.png)
 
-*Figure 4: Sequence diagram of the read operation in the Integration Solution.*
+*Figure 4: Reading data from a digital service.*
 <!--(Author: Rafael Zancan-Frantz, Applied Computing Research Group, Unijuí University, Brazil).-->
 
 The sequence diagram in Figure 4 provides a structured view of how data is securely retrieved from a digital service. Below is an explanation of the key steps involved in the read operation:
@@ -219,7 +219,7 @@ The integration process is responsible for securely sending processed data withi
 
 ![Sequence Diagram of the Write Operation](./figs/write.png)
 
-*Figure 5: Sequence diagram of the write operation in the Integration Solution.*
+*Figure 5: Writing data to a digital service.*
 <!--(Author: Rafael Zancan-Frantz, Applied Computing Research Group, Unijuí University, Brazil).-->
 
 The sequence diagram in **Figure 5** provides a structured view of how data is securely transmitted from the **Integration Process** to a **Digital Service**. Below is an explanation of the steps involved in the write operation:
