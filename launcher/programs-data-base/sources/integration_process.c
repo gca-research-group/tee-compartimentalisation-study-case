@@ -1,9 +1,4 @@
 /*
- * Programmer   : Regis Rodolfo Schuch
- * Date         : 10 June 2024
- *              : Applied Computing Research Group, Unijui University, Brazil
- *              : regis.schuch@unijui.edu.br
- *              :
  * Title        : integration_process.c 
  *              :
  * Description  : The flow of communication between integration_process and the APIs is as follows:
@@ -63,12 +58,6 @@
  *              : https://wiki.openssl.org/index.php/Simple_TLS_Server
  *              : https://www.cin.ufpe.br/~rngs/Arquivos/pthreads/pthreads.pdf
  *              :
- * Compile      :  
- * normal       : clang -o integration_process integration_process.c -lssl -lcrypto -lpthread
- *              :
- * Run          : ./integration_process 
- *              :
- *              :
  * Compile      :
  * Capabilities : clang-morello -march=morello+c64 -mabi=purecap -g -o integration_process integration_process.c -L. -Wl,-dynamic-linker,/libexec/ld-elf-c18n.so.1 -lssl -lcrypto -lpthread
  *              :
@@ -95,15 +84,15 @@
 /* IP addresses are used directly because a memory allocation error occurs in the execution for CHERI capabilities 
 when using DNS. */
 
-#define API1_URL "200.17.87.181" // It's the IP address of: gca-vm-4.unijui.edu.br
+#define API1_URL "200.17.87.181" 
 #define API1_PORT "8080"
 #define API1_ENDPOINT "/api/vendas"
 
-#define API2_URL "200.17.87.182" // It's the IP address of: gca-vm-5.unijui.edu.br
+#define API2_URL "200.17.87.182" 
 #define API2_PORT "8080"
 #define API2_ENDPOINT "/api/viagens"
 
-#define API3_URL "200.17.87.183" // It's the IP address of: gca-vm-6.unijui.edu.br
+#define API3_URL "200.17.87.183" 
 #define API3_PORT "8080"
 #define API3_ENDPOINT "/send-message" 
 
@@ -533,8 +522,7 @@ cleanup:
 }
 
 void *generate_keys(void *arg) {
-    char command[256];
-    // Atualize o caminho aqui para garantir que está correto
+    char command[256];    
     snprintf(command, sizeof(command), "python3 /home/regis/tee-compartmentalisation-study-case/launcher/attestable-data/generate_certificate.py %d", getpid());
     int ret = system(command);
     if (ret != 0) {
