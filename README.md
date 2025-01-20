@@ -141,7 +141,7 @@ Each of these directories contains the following components:
 
 The sequence diagram in Figure 3 represents the attestation and interaction process within the Integration Solution, managed by a **Launcher** program that operates outside the TEE but within the Morello Board operating system. The **Integration Process** functions as a client, interacting with remote servers hosting the digital service applications (apps).
 
-![Sequence Diagram](./figs/launcher.png)
+<img src="./figs/launcher.png" alt="Sequence Diagram" style="width: 100%;">
 
 *Figure 3: Sequence diagram of the attestation and interaction process in the Integration Solution.*
 <!--(Author: Rafael Zancan-Frantz, Applied Computing Research Group, Unijui University, Brazil).-->
