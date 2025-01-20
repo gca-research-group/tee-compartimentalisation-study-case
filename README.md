@@ -35,16 +35,14 @@ The EAI integrates three main components: the store, taxi, and messaging service
 
 ## Implementation architecture of the EAI
 
-In the Figure 2, we assume that the implementation of the EAI is delegated to a third-party company (say, Bob's), and that the four involved parties do not necessarily trust each other. For example, the store, taxi, and messaging services are hesitant to provide their data to the EAI unless Bob implements mechanisms that ensure data protection during execution. This is a critical requirement that our implementation addresses. As shown in the following figure, we use an attestable to meet this requirement.
-
+In Figure 2, we assume that the implementation of the EAI is delegated to a third-party company (e.g., Bob's), and that the four involved parties do not necessarily trust one another. For instance, the store, taxi, and messaging services are reluctant to provide their data to the EAI unless Bob implements mechanisms to ensure data protection during execution. This is a critical requirement that our implementation addresses, as depicted in the figure, by employing an attestable to meet this need.
 
 <img src="./figs/EAIwithATT.png" alt="Enterprise Application Integration with Data Protection" width="400">
 
 *Figure 2: Enterprise Application Integration with Data Protection.* 
 <!--(Author: Carlos Molina-Jimenez, Computer Lab, University of Cambridge. CAMB project).-->
 
-
-In the Figure 2, we use the following notation: the applications (store, taxi, and messaging services) execute on conventional platforms, represented by the "env" boxes with single lines. The attestable (att) is depicted by a double-lined box to indicate that it provides an execution environment that guarantees data protection. The EAI is deployed and executed inside the attestable to protect the data provided by the applications. It's important to note that the EAI acts as a client of the three servers (store, taxi, and messaging) and is programmed to periodically make requests.
+In Figure 2, the following notation is used: the applications (store, taxi, and messaging services) operate on conventional platforms, represented by the "env" boxes with single lines. The attestable (Compartment) is illustrated with a double-lined box, emphasising its role in providing an execution environment that ensures data protection. The Launcher is responsible for coordinating the deployment and execution of the EAI (Integration Process) within the Compartment, thereby ensuring that the data supplied by the applications remains secure throughout the integration process. It is important to highlight that the EAI functions as a client to the three servers (store, taxi, and messaging) and is programmed to periodically issue requests. Additionally, the Launcher facilitates secure interactions between these components and the trusted environment, thereby fulfilling Bob’s responsibility to implement robust data protection mechanisms.
 
 <!--To illustrate the practicality of our current implementation, we highlight that the attestable is created on a Morello Board physically located in Toronto, while the applications run on conventional computers located at the Applied Computing Research Group of the University of Ijuí, Brazil.-->
 
