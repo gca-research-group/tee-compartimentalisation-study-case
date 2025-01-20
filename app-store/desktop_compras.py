@@ -1,9 +1,3 @@
-##
-# Programmer   : Regis Rodolfo Schuch
-# Date         : 10 June 2024
-#              : Applied Computing Research Group, Unijui University, Brazil
-#              : regis.schuch@unijui.edu.br
-#              :
 # Title        : desktop_compras.py 
 #              :
 # Description  : This code defines a GUI shopping application using Tkinter and SQLite. The PurchaseApplication class 
