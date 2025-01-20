@@ -136,7 +136,8 @@ The sequence diagram in Figure 3 represents the attestation and interaction proc
 
 ![Sequence Diagram](./figs/launcher.png)
 
-*Figure 3: Sequence diagram of the attestation and interaction process in the Integration Solution (Author: Rafael Zancan-Frantz, Applied Computing Research Group, Unijui University, Brazil).*
+*Figure 3: Sequence diagram of the attestation and interaction process in the Integration Solution.*
+<!--(Author: Rafael Zancan-Frantz, Applied Computing Research Group, Unijui University, Brazil).-->
 
 
 #### Explanation of the Sequence Diagram:
