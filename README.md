@@ -106,6 +106,13 @@ Each of these directories contains the following components:
 1. **Launcher Initialisation**
    - The launcher is started by running `launcher.py`.
    - Once started, the launcher is ready to receive requests to upload, compile, and run programs.
+   - To interact with the launcher, execute the command-line interface script using the following command:
+
+     ```bash
+     $ python3 command-line-interface.py
+     ```
+
+     This CLI provides a menu to manage the upload, compilation, and execution of integration processes.
 
 2. **Code Upload**
    - The CLI (`command-line-interface.py`) is used to upload a C program (e.g. `integration_process.c`) to the Morello Board environment.
