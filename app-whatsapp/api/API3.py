@@ -1,9 +1,4 @@
 ##
-# Programmer   : Regis Rodolfo Schuch
-# Date         : 10 June 2024
-#              : Applied Computing Research Group, Unijui University, Brazil
-#              : regis.schuch@unijui.edu.br
-#              :
 # Title        : API3.py 
 #              :
 # Description  : The API3.py code defines a RESTful API using Flask to send confirmation messages via WhatsApp 
