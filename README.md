@@ -40,12 +40,13 @@ In the Figure 2, we assume that the implementation of the EAI is delegated to a 
 
 <img src="./figs/EAIwithATT.png" alt="Enterprise Application Integration with Data Protection" width="400">
 
-*Figure 2: Enterprise Application Integration with Data Protection (Author: Carlos Molina-Jimenez, Computer Lab, University of Cambridge. CAMB project).*
+*Figure 2: Enterprise Application Integration with Data Protection.* 
+<!--(Author: Carlos Molina-Jimenez, Computer Lab, University of Cambridge. CAMB project).-->
 
 
 In the Figure 2, we use the following notation: the applications (store, taxi, and messaging services) execute on conventional platforms, represented by the "env" boxes with single lines. The attestable (att) is depicted by a double-lined box to indicate that it provides an execution environment that guarantees data protection. The EAI is deployed and executed inside the attestable to protect the data provided by the applications. It's important to note that the EAI acts as a client of the three servers (store, taxi, and messaging) and is programmed to periodically make requests.
 
-To illustrate the practicality of our current implementation, we highlight that the attestable is created on a Morello Board physically located in Toronto, while the applications run on conventional computers located at the Applied Computing Research Group of the University of Ijuí, Brazil.
+<!--To illustrate the practicality of our current implementation, we highlight that the attestable is created on a Morello Board physically located in Toronto, while the applications run on conventional computers located at the Applied Computing Research Group of the University of Ijuí, Brazil.-->
 
 
 
@@ -177,7 +178,8 @@ The integration process is responsible for securely reading data from integrated
 
 ![Sequence Diagram of the Read Operation](./figs/read.png)
 
-*Figure 4: Sequence diagram of the read operation in the Integration Solution (Author: Rafael Zancan-Frantz, Applied Computing Research Group, Unijuí University, Brazil).*
+*Figure 4: Sequence diagram of the read operation in the Integration Solution.*
+<!--(Author: Rafael Zancan-Frantz, Applied Computing Research Group, Unijuí University, Brazil).-->
 
 The sequence diagram in Figure 4 provides a structured view of how data is securely retrieved from a digital service. Below is an explanation of the key steps involved in the read operation:
 
@@ -211,7 +213,8 @@ The integration process is responsible for securely sending processed data withi
 
 ![Sequence Diagram of the Write Operation](./figs/write.png)
 
-*Figure 5: Sequence diagram of the write operation in the Integration Solution (Author: Rafael Zancan-Frantz, Applied Computing Research Group, Unijui University, Brazil).*
+*Figure 5: Sequence diagram of the write operation in the Integration Solution.*
+<!--(Author: Rafael Zancan-Frantz, Applied Computing Research Group, Unijuí University, Brazil).-->
 
 The sequence diagram in **Figure 5** provides a structured view of how data is securely transmitted from the **Integration Process** to a **Digital Service**. Below is an explanation of the steps involved in the write operation:
 
@@ -238,7 +241,7 @@ The sequence diagram in **Figure 5** provides a structured view of how data is s
 This sequence ensures that the data sent from the **Integration Process** to the **Digital Service** is encrypted and protected during transmission, with the **Launcher** acting as the communication facilitator without having access to the data. The encryption and attestable-based verification guarantee that only authorised and trusted integration processes can write data to the digital service.
 
 
-
+<!--
 ## Acknowledgements
 
 Special thanks to **Carlos Molina-Jimenez** ([carlos.molina@cl.cam.ac.uk](mailto:carlos.molina@cl.cam.ac.uk)), 
@@ -254,4 +257,4 @@ from the Applied Computing Research Group at Unijui University, Brazil. Along wi
 **Regis Rodolfo Schuch**  
 *Applied Computing Research (GCA) Group, Unijui University, Brazil*  
 [regis.schuch@unijui.edu.br](mailto:regis.schuch@unijui.edu.br)
-
+-->
