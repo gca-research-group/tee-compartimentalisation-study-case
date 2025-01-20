@@ -1,9 +1,4 @@
 ##
-# Programmer   : Regis Rodolfo Schuch
-# Date         : 10 June 2024
-#              : Applied Computing Research Group, Unijui University, Brazil
-#              : regis.schuch@unijui.edu.br
-#              :
 # Title        : desktop_transporte.py 
 #              :
 # Description  : The desktop_transporte.py code defines a GUI application using Tkinter to schedule transport 
