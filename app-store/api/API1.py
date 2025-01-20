@@ -1,9 +1,4 @@
 ##
-# Programmer   : Regis Rodolfo Schuch
-# Date         : 10 June 2024
-#              : Applied Computing Research Group, Unijui University, Brazil
-#              : regis.schuch@unijui.edu.br
-#              :
 # Title        : API1.py 
 #              :
 # Description  : API1.py is a web application developed with the Flask framework that serves as an interface for 
