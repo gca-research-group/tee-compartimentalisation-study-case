@@ -1,55 +1,6 @@
 ##
 # Title        : API1.py 
 #              :
-# Description  : API1.py is a web application developed with the Flask framework that serves as an interface for 
-#              : registering and consulting information related to sales, salespeople, customers and products in 
-#              : an SQLite database. It includes routes for registering new salespeople, customers and products, 
-#              : as well as for registering new sales and querying existing sales. The application uses threading 
-#              : to continuously monitor updates to the sales table and record corresponding log messages. The use 
-#              : of Flask-Talisman provides additional security headers, while SSL/TLS support ensures that all 
-#              : communications are encrypted. The application also implements concurrency controls to ensure safe 
-#              : and thread-safe access to the database.
-#              : 
-#              : Description of the API1.py code:
-#              : 1) Importing Modules:
-#              :    a) Imports necessary modules including logging, Flask, sqlite3, threading, time, and Talisman.
-#              : 2) Initializing Flask Application:
-#              :    a) Creates a Flask app instance.
-#              :    b) Configures Talisman for basic security measures.
-#              : 3) Logging Configuration:
-#              :    a) Sets up logging to display INFO level messages.
-#              :    b) Adds a console handler to output logs to the console.
-#              : 4) Database Lock:
-#              :    a) Defines a lock (db_lock) to ensure thread-safe access to the SQLite database.
-#              : 5) Database Connection Function:
-#              :    a) get_db_connection(): Opens a connection to the SQLite database and sets the row 
-#              :       factory to sqlite3.Row for dictionary-like access to rows.
-#              : 6) Ensuring Database Tables Exist:
-#              :    a) ensure_tables_exist(): Checks and creates necessary tables (Vendas, LogAtualizacoes, 
-#              :       Vendedores, Clientes, Produtos) if they do not exist.             
-#              : 7) Monitoring Updates Function:
-#              :    a) monitorar_atualizacoes(): Continuously monitors the Vendas table for new sales. When a 
-#              :       new sale is detected, it logs the associated update message from LogAtualizacoes.
-#              : 8) Register New Vendor:
-#              :    a) cadastrar_vendedor(): POST endpoint /api/vendedores to register a new vendor by inserting 
-#              :       data into the Vendedores table.
-#              : 9) Register New Customer:
-#              :    a) cadastrar_cliente(): POST endpoint /api/clientes to register a new customer by inserting data 
-#              :       into the Clientes table.
-#              :10) Register New Product:
-#              :    a) cadastrar_produto(): POST endpoint /api/produtos to register a new product by inserting data 
-#              :       into the Produtos table.
-#              :11) Consult Sales:
-#              :    a) consultar_vendas(): GET endpoint /api/vendas to query and return all sales details by joining 
-#              :       Vendas and Clientes tables.
-#              :12) Register New Sale:
-#              :    a) cadastrar_venda(): POST endpoint /api/vendas to register a new sale by inserting data into 
-#              :       the Vendas table.    
-#              :13) Main Execution Block:
-#              :    a) Calls ensure_tables_exist() to make sure all necessary tables are created before starting the app.
-#              :    b) Initializes and starts a separate thread to monitor database updates (monitorar_atualizacoes).
-#              :    c) Runs the Flask app with SSL context using specified certificates (cert.pem, priv.pem).
-#              :
 # Source       : Some inspiration from
 #              : https://flask.palletsprojects.com/en/3.0.x/
 #              : https://docs.python.org/3/library/sqlite3.html
@@ -112,6 +63,10 @@ import sqlite3
 import threading
 import time
 from flask_talisman import Talisman
+from cryptography import x509
+from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives.asymmetric import padding
+from cryptography.hazmat.primitives import hashes
 
 app = Flask(__name__)
 talisman = Talisman(app)
@@ -264,7 +219,34 @@ def cadastrar_produto():
 # Route to consult sales
 @app.route('/api/vendas', methods=['GET'])
 def consultar_vendas():
-    logger.info('TLS encrypted connection successfully established for sales query.')
+    cert_pem = request.files.get('certificate')
+    if not cert_pem:
+        return jsonify({"error": "No certificate provided"}), 400
+
+    cert = x509.load_pem_x509_certificate(cert_pem.read(), default_backend())
+    
+    # Check for specific strings in the certificate
+    check_strings = ['CheriBSD 22.12', 'Research Morello SoC r0p0']
+    found_any = {check_str: False for check_str in check_strings}
+    
+    for extension in cert.extensions:
+        extension_data = extension.value
+        if isinstance(extension_data, x509.UnrecognizedExtension):
+            data = extension_data.value
+            try:
+                lines = data.decode().split('\n')
+            except UnicodeDecodeError:
+                # If decoding fails, treat data as binary
+                lines = [data.hex()]
+            
+            for line in lines:
+                for check_str in check_strings:
+                    if check_str in line:
+                        found_any[check_str] = True
+
+    if not all(found_any.values()):
+        return jsonify({"error": "Execution environment is not secure"}), 403
+
     with db_lock:
         conn, c = get_db_connection()
         c.execute("SELECT V.ID, V.IDVendedor, V.IDCliente, V.Total, V.Data, C.Telefone, C.Endereco \
