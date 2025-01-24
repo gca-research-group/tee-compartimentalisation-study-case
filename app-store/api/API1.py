@@ -42,19 +42,6 @@
 # Compile and  :
 # run          : $ python3 API1.py
 #              :
-#              :
-# Directory    :
-# structure    : app-store
-#              : ├── api
-#              : │   └── API1.py
-#              : ├── data_access
-#              : │   └── compras.db
-#              : ├── desktop_compras.py
-#              : └── keys
-#              :     ├── cert.pem
-#              :     |── priv.pem
-#              :     └── public_key.pem
-#              :
 ##   
     
 import logging
@@ -63,10 +50,6 @@ import sqlite3
 import threading
 import time
 from flask_talisman import Talisman
-from cryptography import x509
-from cryptography.hazmat.backends import default_backend
-from cryptography.hazmat.primitives.asymmetric import padding
-from cryptography.hazmat.primitives import hashes
 
 app = Flask(__name__)
 talisman = Talisman(app)
@@ -219,34 +202,7 @@ def cadastrar_produto():
 # Route to consult sales
 @app.route('/api/vendas', methods=['GET'])
 def consultar_vendas():
-    cert_pem = request.files.get('certificate')
-    if not cert_pem:
-        return jsonify({"error": "No certificate provided"}), 400
-
-    cert = x509.load_pem_x509_certificate(cert_pem.read(), default_backend())
-    
-    # Check for specific strings in the certificate
-    check_strings = ['CheriBSD 22.12', 'Research Morello SoC r0p0']
-    found_any = {check_str: False for check_str in check_strings}
-    
-    for extension in cert.extensions:
-        extension_data = extension.value
-        if isinstance(extension_data, x509.UnrecognizedExtension):
-            data = extension_data.value
-            try:
-                lines = data.decode().split('\n')
-            except UnicodeDecodeError:
-                # If decoding fails, treat data as binary
-                lines = [data.hex()]
-            
-            for line in lines:
-                for check_str in check_strings:
-                    if check_str in line:
-                        found_any[check_str] = True
-
-    if not all(found_any.values()):
-        return jsonify({"error": "Execution environment is not secure"}), 403
-
+    logger.info('TLS encrypted connection successfully established for sales query.')
     with db_lock:
         conn, c = get_db_connection()
         c.execute("SELECT V.ID, V.IDVendedor, V.IDCliente, V.Total, V.Data, C.Telefone, C.Endereco \
@@ -287,4 +243,3 @@ if __name__ == '__main__':
 
     # Disable reloader to avoid multiple prompts for PEM pass phrase
     app.run(ssl_context=('../keys/cert.pem', '../keys/priv.pem'), debug=True, use_reloader=False, host='200.17.87.181', port=8080)
-
