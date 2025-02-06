@@ -218,7 +218,7 @@ This interaction ensures that the data transferred between the **Integration Pro
 
 The integration process is responsible for securely sending processed data within the integration flow to integrated digital services. This process is carried out through a write operation, with the **Integration Process** acting as the client and the **Digital Service** as the server. The diagram in **Figure 5** illustrates the sequence of events during the execution of a write operation that the EAI performs to send data to one of the applications, such as a messaging service. For instance, the EAI executes a write operation to the messaging application to notify it that a client is ready for a taxi ride home.
 
-![Sequence Diagram of the Write Operation](./figs/write.png)
+![Sequence Diagram of the Write Operation](./figs/write-2.png)
 
 *Figure 5: Writing data to a digital service.*
 <!--(Author: Rafael Zancan-Frantz, Applied Computing Research Group, Unijuí University, Brazil).-->
