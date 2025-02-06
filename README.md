@@ -16,9 +16,9 @@ We demonstrate how to execute an integration process within a TEE using Morello 
 
 A conceptual view of the application involved in the EAI is illustrated in Figure 1.
 
-<img src="./figs/EAI-2.png" alt="Conceptual View of the EAI">
+<!--<img src="./figs/EAI-2.png" alt="Conceptual View of the EAI"> -->
 
-<!--![Conceptual View of the EA](./figs/EAI.png)-->
+[Conceptual View of the EA](./figs/EAI-2.png)
 
 *Figure 1: Conceptual View of the EAI.* 
 <!--(Author: Carlos Molina-Jimenez, Computer Lab, University of Cambridge. CAMB project).-->
