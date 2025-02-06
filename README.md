@@ -16,7 +16,7 @@ We demonstrate how to execute an integration process within a TEE using Morello 
 
 A conceptual view of the application involved in the EAI is illustrated in Figure 1.
 
-<img src="./figs/EAI.png" alt="Conceptual View of the EA" width="300">
+<img src="./figs/EAI-2.png" alt="Conceptual View of the EAI">
 
 <!--![Conceptual View of the EA](./figs/EAI.png)-->
 
@@ -38,7 +38,7 @@ The EAI integrates three main components: the store, taxi, and messaging service
 
 In Figure 2, we assume that the implementation of the EAI is delegated to a third-party company (e.g., Bob's), and that the four involved parties do not necessarily trust one another. For instance, the store, taxi, and messaging services are reluctant to provide their data to the EAI unless Bob implements mechanisms to ensure data protection during execution. This is a critical requirement that our implementation addresses, as depicted in the figure, by employing an attestable to meet this need.
 
-![Enterprise Application Integration with Data Protection](./figs/EAIwithATT.png)
+![Enterprise Application Integration with Data Protection](./figs/EAIwithATT-2.png)
 
 *Figure 2: Enterprise Application Integration with Data Protection.* 
 <!--(Author: Carlos Molina-Jimenez, Computer Lab, University of Cambridge. CAMB project).-->
