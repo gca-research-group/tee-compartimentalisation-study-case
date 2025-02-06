@@ -36,14 +36,25 @@ The EAI integrates three main components: the store, taxi, and messaging service
 
 ## Implementation architecture of the EAI
 
-In Figure 2, we assume that the implementation of the EAI is delegated to a third-party company (e.g., Bob's), and that the four involved parties do not necessarily trust one another. For instance, the store, taxi, and messaging services are reluctant to provide their data to the EAI unless Bob implements mechanisms to ensure data protection during execution. This is a critical requirement that our implementation addresses, as depicted in the figure, by employing an attestable to meet this need.
+As shown in Figure 2, to guarantee data privacy, we execute the integration process within a memory compartment. To illustrate the idea with a specific technology, we use compartments created on a Morello Board running the CheriBSD operating system. As explained above, the digital services are hosted on conventional computers. The architecture is composed of three main components: the `Launcher`, the `Integration Process`, and the `Digital Services`. Observe that the integration process acts as a client that places requests, through the Launcher, against the digital services that act as servers.
 
 ![Enterprise Application Integration with Data Protection](./figs/case-study.png)
 
-*Figure 2: Enterprise Application Integration with Data Protection.* 
-<!--(Author: Carlos Molina-Jimenez, Computer Lab, University of Cambridge. CAMB project).-->
+*Figure 2: Architecture of the integration process solution in the case study, designed using a trusted environment development approach.*  
+<!-- (Author: Carlos Molina-Jimenez, Computer Lab, University of Cambridge. CAMB project) -->
 
-In Figure 2, the following notation is used: the applications (store, taxi, and messaging services) operate on conventional platforms, represented by the "env" boxes with single lines. The attestable (Compartment) is illustrated with a double-lined box, emphasising its role in providing an execution environment that ensures data protection. The Launcher is responsible for coordinating the deployment and execution of the EAI (Integration Process) within the Compartment, thereby ensuring that the data supplied by the applications remains secure throughout the integration process. It is important to highlight that the EAI functions as a client to the three servers (store, taxi, and messaging) and is programmed to periodically issue requests. Additionally, the Launcher facilitates secure interactions between these components and the trusted environment, thereby fulfilling Bob’s responsibility to implement robust data protection mechanisms.
+The memory compartment is shown in a yellow box; the double lines indicate that it guarantees isolation and protection of sensitive data. The Launcher manages the interactions between the integration process and the digital services. Upon request from the Morello Board's manager, the Launcher retrieves the source code of the integration process from the `Code Repository`, then compiles and deploys the executable version in the memory compartment. Although the Launcher bridges the *read* and *write* actions, it does not have access to the data in transit since the data is always encrypted and decrypted at both ends.
+
+To illustrate with an example, imagine that the integration process wants to verify if there are customers eligible for free taxis; a set of operations must be executed:
+
+1. The `Integration Process` executes a `read()` action on the `Launcher`.
+2. The `Launcher` translates the `read()` to a `request()` and forwards it to the `Store Service`, which responds with customers' latest transactions.
+3. After examination, the `Integration Process` determines that there are eligible customers for free taxis and executes a `write()` action against the `Launcher` to send the eligible customers' details to the `Taxi Service`.
+4. As a response, the `Launcher` translates the `write()` into a `post()` and forwards it to the `Taxi Service`.
+5. The `Integration Process` executes a `write()` action on the `Launcher` to send the taxi booking confirmation to the `Messaging Service`.
+6. The `Launcher` translates the `write()` into a `post()` and forwards it to the `Messaging Service`, which is programmed to send taxi booking confirmation messages to the awarded customers' mobile phones.
+
+Note that data is transmitted encrypted over the communication channels. Well-known cryptographic techniques are available for protecting data in transit; for example, secure channels can be established between integration processes and each digital service using the SSL protocol. This approach would require public key certificates for authentication, which are also available.
 
 <!--To illustrate the practicality of our current implementation, we highlight that the attestable is created on a Morello Board physically located in Toronto, while the applications run on conventional computers located at the Applied Computing Research Group of the University of Ijuí, Brazil.-->
 
