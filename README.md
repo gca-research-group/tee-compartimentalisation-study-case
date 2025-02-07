@@ -63,11 +63,11 @@ Note that data is transmitted encrypted over the communication channels. Well-kn
 
 # Execution of a Read Action
 
-The sequence diagram in Figure 4 details the operations involved. This diagram illustrates how the integration process requests data from a digital service (e.g., the Store Service).
+The sequence diagram in Figure 3 details the operations involved. This diagram illustrates how the integration process requests data from a digital service (e.g., the Store Service).
 
 ![Sequence Diagram of the Read Operation](./figs/read.png)
 
-*Figure 4. Operations to implement the read action for requesting data from a digital service.*
+*Figure 3. Operations to implement the read action for requesting data from a digital service.*
 
 
 The reading action starts when the `read()` operation (1) in the integration process (`exePrc`) is invoked, receiving as a parameter the digital service identifier `srvId`, which specifies the service from which data must be read (e.g., the ID of the `Store Service`). This invocation triggers a sequence of operations to complete the *read* action:
@@ -106,11 +106,11 @@ The reading action starts when the `read()` operation (1) in the integration pro
 
 # Execution of a Write Action
 
-The sequence diagram in Figure 5 details the operations involved. Similar to the *read* action, this diagram shows how the integration process (`exePrc`) securely transmits data to a digital service (e.g., the `Taxi Service`), following an ordered sequence of operations.
+The sequence diagram in Figure 4 details the operations involved. Similar to the *read* action, this diagram shows how the integration process (`exePrc`) securely transmits data to a digital service (e.g., the `Taxi Service`), following an ordered sequence of operations.
 
 ![Sequence Diagram of the Write Operation](./figs/write.png)
 
-*Figure 5: Operations to implement the write action for posting data to a digital service.*
+*Figure 4: Operations to implement the write action for posting data to a digital service.*
 
 
 The *write* action starts when the `write()` operation (1) in the integration process is invoked. This operation receives as parameters the identifier `srvId` of the targeted digital service (e.g., the ID of the `Taxi Service` or `Messaging Service`) and the dataset `data` to be posted to the service. This invocation triggers the sequence of interactions required to complete the *write* action:
