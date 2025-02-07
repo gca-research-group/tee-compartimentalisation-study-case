@@ -146,7 +146,7 @@ Each of these directories contains the following components:
 
 
 
-
+<!--
 # Attestation and Set-Up of the Attestable
 
 The sequence diagram in Figure 3 represents the attestation and interaction process within the Integration Solution, managed by a **Launcher** program that operates outside the TEE but within the Morello Board operating system. The **Integration Process** functions as a client, interacting with remote servers hosting the digital service applications (apps).
@@ -188,40 +188,48 @@ The sequence diagram in Figure 3 represents the attestation and interaction proc
 - The secure compartment acts as a critical component in the execution, ensuring that all interactions and data exchanges remain encrypted and protected.
 - The sequence of events includes not only the setup of the integration process but also important steps such as key exchange, certificate generation, and secure data transfer between services.
 - The role of the root of trust (Verisign) ensures that the certificates used during the process are valid and can be trusted by external digital services.
+-->
+  
 
+# Execution of a Read Action
 
-# Execution of a Read Operation
+## Implementation of the `read` Action using the iDevS API
 
-The integration process is responsible for securely reading data from integrated digital services. This is accomplished through a read operation, with the **Integration Process** acting as the client and the **Digital Service** as the server. The sequence diagram in Figure 4 illustrates the sequence of events in the execution of a read operation that the EAI performs against one of the applications, such as the storage service, to request data.
+The sequence diagram in Figure 4 details the operations involved. This diagram illustrates how the integration process requests data from a digital service (e.g., the Store Service).
 
 ![Sequence Diagram of the Read Operation](./figs/read.png)
 
-*Figure 4: Reading data from a digital service.*
-<!--(Author: Rafael Zancan-Frantz, Applied Computing Research Group, Unijuí University, Brazil).-->
+The reading action starts when the `read()` operation (1) in the integration process (`exePrc`) is invoked, receiving as a parameter the digital service identifier `srvId`, which specifies the service from which data must be read (e.g., the ID of the `Store Service`). This invocation triggers a sequence of operations to complete the *read* action:
 
-The sequence diagram in Figure 4 provides a structured view of how data is securely retrieved from a digital service. Below is an explanation of the key steps involved in the read operation:
+1. The integration process invokes the `read()` operation, passing the identifier `srvId` of the digital service from which it needs to read data.
 
-1. **Start of the Read Request**: The **Integration Process** initiates a read request to retrieve data from the **Digital Service**, identified by `srvId`. The goal is to obtain the dataset (`Dataset`).
+2. The integration process forwards the `read()` request to the `Launcher`, appending the program identifier `progId` to uniquely identify the requesting integration process and validate its execution within the memory compartment of the TEE.
 
-2. **Request for Encrypted Data**: The **Integration Process** sends a request to the **Launcher**, asking for encrypted data (`EncDataset`) from the **Digital Service**. The `srvId` and `progId` are used to identify the digital service and the integration process.
+3. The `Launcher` executes the `lookupService()` operation to locate the service instance associated with `srvId`. The execution returns a reference to the corresponding integrated digital service (e.g., the `Store Service`).
 
-3. **Service Lookup**: The **Launcher** locates the digital service using the service ID (`srvId`) and establishes a connection to it, typically via a RESTful service, using the `lockupService(srvId)` function.
+4. To verify the trustworthiness of the requesting integration process, the `Launcher` invokes its `getCertificate()` operation, passing the program identifier `progId`. This operation retrieves the attestable certificate (`SignedCertificate`), following the X.509 standard[^1], generated from an attestation document and stored in PEM format[^2]. This certificate encapsulates essential attributes, such as the CPU model and the operating system version.
 
-4. **Retrieval of Signed Certificate**: The **Launcher** retrieves the signed certificate corresponding to the integration process by calling the `getCertificate(progId)` function. This certificate is necessary to verify that the integration process is running in a trusted execution environment.
+5. The `Launcher` invokes the `getProgramPublicKey()` operation to retrieve the public key (`Key`) associated with the current integration process. This key will be used later to encrypt the data transmitted between the components.
 
-5. **Obtaining the Public Key**: The **Launcher** then calls the `getProgramPublicKey(progId)` function to retrieve the public key (`puK`) of the **Integration Process**, which will be used for encrypting and decrypting the data.
+6. With the service reference and necessary cryptographic artifacts retrieved, the `Launcher` invokes the `request()` operation on the digital service, providing the attestable certificate (`signedCert`) and the public key (`puK`). The digital service uses these to authenticate the request and confirm that it originates from a trusted environment.
 
-6. **Requesting Data from the Service**: The **Launcher** sends a secure request to the **Digital Service**, providing both the signed certificate and the public key (`puK`), through the `request(signedCert, puK)` function.
+7. Upon receiving the request, the digital service invokes its `verifyCertificate()` operation to validate the received certificate. The verification process involves:
+   - **Step 1:** Checking whether the certificate was issued and signed by a trusted Root Certificate Authority (CA), such as VeriSign[^3], to ensure authenticity.  
+   - **Step 2:** Validating the attestable attributes (e.g., CPU model and OS version) to confirm that the integration process is running within a trusted environment.
 
-7. **Certificate Verification**: The **Digital Service** verifies the certificate using the `verifyCertificate(signedCert)` function. If the certificate is valid (`r == true`), the service proceeds to retrieve the requested data.
+   If the certificate is invalid, the request is rejected, and no data is retrieved.
 
-8. **Data Retrieval and Encryption**: The **Digital Service** retrieves the requested dataset (`Dataset`) from its local storage by calling the `retrieveLocalData()` function and encrypts it using the public key (`puK`), through the `encrypt(puK, data)` function, to ensure that only the **Integration Process** can decrypt and access the data.
+8. If the certificate is valid (`r == true`), the digital service retrieves the requested data (`Dataset`) locally using its `retrieveLocalData()` operation. The data can be structured, for example, in JSON format, to facilitate compatibility between digital services and integration processes.
 
-9. **Sending Encrypted Data**: The **Digital Service** sends the encrypted dataset (`dataEnc`) back to the **Launcher**, which forwards it to the **Integration Process**.
+9. To secure the data during transmission, the digital service invokes its `encrypt()` operation, encrypting the data using the public key (`puK`) of the integration process. The result is an encrypted dataset (`EncDataset`) that ensures confidentiality throughout the entire *read* action.
 
-10. **Data Decryption**: The **Integration Process** uses its private key (`prK`) to decrypt the encrypted dataset. Once decrypted, the integration process has access to the dataset, completing the read operation by calling the `decrypt(prK, dataEnc)` function.
+10. The encrypted dataset is securely transmitted (e.g., via HTTPS) to the `Launcher`, which forwards it to the integration process. Upon receiving the encrypted data, the integration process invokes its `decrypt()` operation using its private key (`prK`) to recover the original dataset (`Dataset`) and proceed with its processing.
 
-This interaction ensures that the data transferred between the **Integration Process** and the **Digital Service** remains encrypted and protected, with the **Launcher** acting as a facilitator but never having access to the actual data. The encryption and attestation-based verification ensure the security of the operation, confirming that only authorised integration processes can read and decrypt the data.
+---
+
+[^1]: X.509 is a widely used standard for digital certificates.  
+[^2]: PEM is an encoding format for storing digital certificates.  
+[^3]: Root CA: [VeriSign](https://www.verisign.com/)
 
 
 
