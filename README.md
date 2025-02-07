@@ -10,7 +10,7 @@ To explore these properties, we have implemented an **Enterprise Application Int
 We demonstrate how to execute an integration process within a TEE using Morello Board hardware located in Canada. The case study implements three mock digital services (apps) running on distinct remote servers in Brazil, along with an integration process (program) written and compiled for **CHERI capabilities (cheri-caps)**. The integration process runs inside a secure compartment.
 
 
-## Integration Problem Overview
+# Integration Problem Overview
 
 A conceptual view of the application involved in the EAI is illustrated in **Figure 1**. 
 
@@ -37,7 +37,7 @@ To automate the coordination, the integration process executes the following *re
 4. **Write Action (Messaging Service):** Executes a *write* action on the Messaging Service to send booking confirmations to the awarded customers. These messages include the vehicle's description, the driver’s name, and the departure time.
 
 
-## Integration Process Design
+# Integration Process Design
 
 As shown in Figure 2, to guarantee data privacy, we execute the integration process within a memory compartment. To illustrate the idea with a specific technology, we use compartments created on a Morello Board running the CheriBSD operating system. As explained above, the digital services are hosted on conventional computers. The architecture is composed of three main components: the `Launcher`, the `Integration Process`, and the `Digital Services`. Observe that the integration process acts as a client that places requests, through the Launcher, against the digital services that act as servers.
 
