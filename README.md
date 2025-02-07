@@ -7,14 +7,13 @@ This repository focuses on evaluating two key attestable properties:
 
 To explore these properties, we have implemented an **Enterprise Application Integration (EAI)** solution, also referred to as an **Integration Process**, which operates within a trusted execution environment (TEE) on experimental Morello Board hardware.
 
-In the implemented case study, a store offers a promotion to its customers: if a customer spends more than $150.00, they receive a ride home in an app-based car service, paid for by the store. This business strategy integrates the store’s operations with the transportation service, promoting sales and enhancing customer convenience through seamless digital service integration. The integration process is executed inside a TEE, demonstrating how secure communication and interaction between different digital services, running on distinct remote servers, can be achieved in a trusted environment.
-
 We demonstrate how to execute an integration process within a TEE using Morello Board hardware located in Canada. The case study implements three mock digital services (apps) running on distinct remote servers in Brazil, along with an integration process (program) written and compiled for **CHERI capabilities (cheri-caps)**. The integration process runs inside a secure compartment.
 
 
-## Conceptual View of the EAI
+## Integration Problem Overview
 
-A conceptual view of the application involved in the EAI is illustrated in Figure 1.
+A conceptual view of the application involved in the EAI is illustrated in **Figure 1**. 
+
 
 <!--<img src="./figs/EAI-2.png" alt="Conceptual View of the EAI"> -->
 
@@ -24,14 +23,18 @@ A conceptual view of the application involved in the EAI is illustrated in Figur
 <!--(Author: Carlos Molina-Jimenez, Computer Lab, University of Cambridge. CAMB project).-->
 
 
-The EAI integrates three main components: the store, taxi, and messaging services. These components act as servers, and the EAI operates as a client that sends requests to these services. The interaction between the EAI and the component applications follows a message-driven process:
+The scenario represents a strategy implemented by a store to attract and retain customers: it offers free transport back home to customers who spend at least \$150 in the store. The rewarded customers receive booking confirmation messages on their mobile phones. The integration process is responsible for automating and securely coordinating the interactions among three independent digital services:
 
-1. The EAI requests a copy of the bill for a store's client, for example, Alice.
-2. The store responds with the bill amount. Let's assume the bill is above $150.00, which entitles Alice to a courtesy taxi ride.
-3. The EAI sends a request to the taxi service to arrange a ride for Alice.
-4. The taxi service responds with the taxi's number and the driver’s name, confirming that a taxi is ready for boarding.
-5. The EAI then sends a message to Alice, offering her the taxi service.
-6. Alice responds with an acceptance of the offer.
+- **Store Service:** Provides details about customers (e.g., mobile phone number and address) and their purchases (e.g., items purchased and prices).  
+- **Taxi Service:** Schedules transportation.  
+- **Messaging Service:** Sends booking confirmation messages.  
+
+To automate the coordination, the integration process executes the following *read* and *write* actions:
+
+1. **Read Action:** Periodically executes *read* actions on the Store Service to retrieve customers' transaction details.  
+2. **Eligibility Check:** Identifies customers who are eligible for free transport based on their purchase amount.  
+3. **Write Action (Taxi Service):** Executes a *write* action on the Taxi Service to request taxi services for the rewarded customers, including their personal details.  
+4. **Write Action (Messaging Service):** Executes a *write* action on the Messaging Service to send booking confirmations to the awarded customers. These messages include the vehicle's description, the driver’s name, and the departure time.
 
 
 ## Integration Process Design
