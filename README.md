@@ -144,8 +144,9 @@ The *write* action starts when the `write()` operation (1) in the integration pr
 
 
 
+# Implementation
 
-# Functionality of the Components
+## Functionality of the Components
 
 ### 1) App-Store, App-Transport, and App-Whatsapp
 
@@ -230,51 +231,6 @@ Each of these directories contains the following components:
    - The `integration_process.c` makes HTTPS calls to the defined APIs (`API1_URL`, `API2_URL`, `API3_URL`), using OpenSSL to check sales, book trips, and send confirmation messages via WhatsApp.
 
 
-
-<!--
-# Attestation and Set-Up of the Attestable
-
-The sequence diagram in Figure 3 represents the attestation and interaction process within the Integration Solution, managed by a **Launcher** program that operates outside the TEE but within the Morello Board operating system. The **Integration Process** functions as a client, interacting with remote servers hosting the digital service applications (apps).
-
-![Sequence Diagram](./figs/launcher.png)
-
-*Figure 3: Deploying and Executing Integration Processes Inside a TEE.*
-<!--(Author: Rafael Zancan-Frantz, Applied Computing Research Group, Unijui University, Brazil).-->
-
-
-#### Explanation of the Sequence Diagram:
-
-1. **Launcher Initialization**: The launcher begins the process by invoking the `start()` operation, which prepares the system to handle various operations, such as retrieving source code, compiling, and executing programs.
-
-2. **Retrieving the Source Code**: For each source code, the launcher retrieves the necessary program (Integration Process) from its local database using the `retrieveProgram(id)` operation. This step fetches the source code of the **Integration Process**, essential for the subsequent operations.
-
-3. **Compartment Creation**: The launcher requests the creation of a secure compartment by calling the `createCompartment()` operation in the Morello Board's operating system. This compartment provides a secure execution environment for the **Integration Process**.
-
-4. **Source Code Compilation**: After retrieving the source code, the launcher compiles it for CHERI capabilities using the `compile(src)` operation. The result is an executable (`exe`) suitable for secure execution within the compartment.
-
-5. **Deploying the Integration Process**: The compiled executable is then deployed within the compartment using the `deploy(exe)` operation. This deployment generates attestable data (`attestableData`), represented as a `HashMap`, which is crucial for ensuring the process operates securely inside the compartment.
-
-6. **Key Pair Generation**: Inside the compartment, the **Integration Process** generates a key pair using the `generateKeyPair()` function. This pair consists of a public key (`puK`) and a private key (`prK`), which will be used for secure communication with the digital services.
-
-7. **Certificate and Public Key Exchange**:
-   - The `generateAttestableDoc()` operation is called to generate an attestable document containing the attestable data from the secure environment.
-   - The public key of the **Integration Process** is retrieved using the `getPublicKey()` operation, ensuring secure interaction with external services.
-   - The **Integration Process** gathers all available digital services using the `getIntegratedServices()` operation.
-   - A key exchange occurs between the public key of the **Integration Process** and the external services using the `exchangeKeys(puK, services)` operation.
-
-8. **Registering the Service's Public Key**: After the key exchange, the public keys of the digital services are securely stored via the `putServicePublicKey(srvId, puK_)` operation. This ensures that the keys are safely registered for communication with the **Integration Process**.
-
-9. **Certificate Generation and Signing**: The launcher generates the final attestable certificate using the `generateCertificate(doc)` operation. This certificate is signed by a root certificate authority, such as Verisign, using the `sign(certificate)` operation to verify the integrity and authenticity of the process.
-
-10. **Execution of the Integration Process**: Finally, the launcher invokes the `run()` operation, executing the compiled **Integration Process** within the secure compartment. At this point, the **Integration Process** can securely interact with external services (e.g., store, transportation, or messaging apps), ensuring data protection and the attestation of the trusted execution environment.
-
-### Additional Considerations
-
-- The secure compartment acts as a critical component in the execution, ensuring that all interactions and data exchanges remain encrypted and protected.
-- The sequence of events includes not only the setup of the integration process but also important steps such as key exchange, certificate generation, and secure data transfer between services.
-- The role of the root of trust (Verisign) ensures that the certificates used during the process are valid and can be trusted by external digital services.
--->
-  
 
 
 
