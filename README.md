@@ -144,7 +144,7 @@ The *write* action starts when the `write()` operation (1) in the integration pr
 
 
 
-# Implementation
+# Implementation and Execution
 
 ## Functionality of the Components
 
