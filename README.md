@@ -5,7 +5,7 @@ This repository focuses on evaluating two key attestable properties:
 - The operation of the cloud-based attestation procedure discussed in the [attestablelauncher repository](https://github.com/CAMB-DSbD/attestablelauncher).
 - Some performance properties of compartments created on a Morello Board, using a library compartmentalisation tool.
 
-To explore these properties, we have implemented an **Enterprise Application Integration (EAI)** solution, also referred to as an **Integration Solution**, which operates within a trusted execution environment (TEE) on experimental Morello Board hardware.
+To explore these properties, we have implemented an **Enterprise Application Integration (EAI)** solution, also referred to as an **Integration Process**, which operates within a trusted execution environment (TEE) on experimental Morello Board hardware.
 
 In the implemented case study, a store offers a promotion to its customers: if a customer spends more than $150.00, they receive a ride home in an app-based car service, paid for by the store. This business strategy integrates the store’s operations with the transportation service, promoting sales and enhancing customer convenience through seamless digital service integration. The integration process is executed inside a TEE, demonstrating how secure communication and interaction between different digital services, running on distinct remote servers, can be achieved in a trusted environment.
 
@@ -34,7 +34,7 @@ The EAI integrates three main components: the store, taxi, and messaging service
 6. Alice responds with an acceptance of the offer.
 
 
-## Implementation architecture of the EAI
+## Integration Process Design
 
 As shown in Figure 2, to guarantee data privacy, we execute the integration process within a memory compartment. To illustrate the idea with a specific technology, we use compartments created on a Morello Board running the CheriBSD operating system. As explained above, the digital services are hosted on conventional computers. The architecture is composed of three main components: the `Launcher`, the `Integration Process`, and the `Digital Services`. Observe that the integration process acts as a client that places requests, through the Launcher, against the digital services that act as servers.
 
@@ -66,6 +66,9 @@ Note that data is transmitted encrypted over the communication channels. Well-kn
 The sequence diagram in Figure 4 details the operations involved. This diagram illustrates how the integration process requests data from a digital service (e.g., the Store Service).
 
 ![Sequence Diagram of the Read Operation](./figs/read.png)
+
+*Figure 4. Operations to implement the read action for requesting data from a digital service.*
+
 
 The reading action starts when the `read()` operation (1) in the integration process (`exePrc`) is invoked, receiving as a parameter the digital service identifier `srvId`, which specifies the service from which data must be read (e.g., the ID of the `Store Service`). This invocation triggers a sequence of operations to complete the *read* action:
 
@@ -101,38 +104,40 @@ The reading action starts when the `read()` operation (1) in the integration pro
 
 
 
-# Execution of a Write Operation
+# Execution of a Write Action
 
-The integration process is responsible for securely sending processed data within the integration flow to integrated digital services. This process is carried out through a write operation, with the **Integration Process** acting as the client and the **Digital Service** as the server. The diagram in **Figure 5** illustrates the sequence of events during the execution of a write operation that the EAI performs to send data to one of the applications, such as a messaging service. For instance, the EAI executes a write operation to the messaging application to notify it that a client is ready for a taxi ride home.
+The sequence diagram in Figure 5 details the operations involved. Similar to the *read* action, this diagram shows how the integration process (`exePrc`) securely transmits data to a digital service (e.g., the `Taxi Service`), following an ordered sequence of operations.
 
-![Sequence Diagram of the Write Operation](./figs/write-2.png)
+![Sequence Diagram of the Write Operation](./figs/write.png)
 
-*Figure 5: Writing data to a digital service.*
-<!--(Author: Rafael Zancan-Frantz, Applied Computing Research Group, Unijuí University, Brazil).-->
+*Figure 5: Operations to implement the write action for posting data to a digital service.*
 
-The sequence diagram in **Figure 5** provides a structured view of how data is securely transmitted from the **Integration Process** to a **Digital Service**. Below is an explanation of the steps involved in the write operation:
 
-1. **Initiating the Write Request**: The **Integration Process** initiates a write request, specifying the destination **Digital Service**, identified by `srvId`, and the data to be sent.
+The *write* action starts when the `write()` operation (1) in the integration process is invoked. This operation receives as parameters the identifier `srvId` of the targeted digital service (e.g., the ID of the `Taxi Service` or `Messaging Service`) and the dataset `data` to be posted to the service. This invocation triggers the sequence of interactions required to complete the *write* action:
 
-2. **Retrieving the Public Key of the Service**: The **Integration Process** retrieves the public key (`puK_`) of the **Digital Service** using the `getServicePublicKey(srvId)` operation. This public key will be used to encrypt the data, ensuring secure transmission.
+1. The integration process invokes the `write()` operation, specifying the target service identifier (`srvId`) and the dataset (`data`) to be transmitted.
 
-3. **Encrypting the Data**: The data is encrypted using the public key (`puK_`) retrieved in the previous step. The result is an encrypted dataset (`dataEnc`), which will be securely transmitted to the service.
+2. To protect the transmitted data, the integration process invokes its `getServicePublicKey()` operation to retrieve the public key (`puK_`) of the target digital service. This ensures that only the intended service can decrypt the data.
 
-4. **Sending the Encrypted Data**: The **Integration Process** sends the encrypted data (`dataEnc`) to the **Launcher** via the `write(srvId, progId, dataEnc)` operation. The `progId` identifies the integration process.
+3. The integration process invokes its `encrypt()` operation to encrypt the dataset (`data`) using the public key (`puK_`). The result is an encrypted dataset (`dataEnc`), which ensures the confidentiality of the transmitted data.
 
-5. **Service Lookup**: The **Launcher** searches for the digital service using the `lockupService(srvId)` operation to locate the corresponding **Digital Service** for this request.
+4. The integration process invokes the `write()` operation on the `Launcher`, passing the service identifier (`srvId`), the integration process identifier (`progId`), and the encrypted dataset (`dataEnc`). This step enables the `Launcher` to attach the attestable’s certificate and forward the data to the target digital service.
 
-6. **Retrieving the Certificate**: The **Launcher** retrieves the signed certificate of the **Integration Process** using the `getCertificate(progId)` operation, which will be used to verify the integrity of the process.
+5. The `write()` operation at the `Launcher` begins by invoking the `lookupService()` operation, passing the digital service identifier (`srvId`) to locate the corresponding target service instance. This operation returns a reference to the digital service.
 
-7. **Sending the Encrypted Data**: The **Launcher** securely sends the encrypted data and the signed certificate to the **Digital Service** using the `post(signedCert, dataEnc)` operation.
+6. The `Launcher` invokes its `getCertificate()` operation, passing the integration process identifier (`progId`) to retrieve the attestable certificate (`SignedCertificate`) associated with the current integration process.
 
-8. **Verifying the Certificate**: The **Digital Service** verifies the provided certificate using the `verifyCertificate(signedCert)` operation. If the certificate is valid (`r == true`), the service proceeds to process the data.
+7. Once the certificate is retrieved, the `Launcher` invokes the `post()` operation on the target digital service, forwarding both the attestable certificate (`signedCert`) and the encrypted dataset (`dataEnc`) as parameters.
 
-9. **Decrypting the Data**: The **Digital Service** decrypts the encrypted data (`dataEnc`) using its private key (`prK_`), recovering the original dataset (`Dataset`).
+8. Upon receiving the `post()` request, the digital service invokes its `verifyCertificate()` operation to validate the provided certificate, following the same steps as in the *read* action:
+   - **Step 1:** Checking whether the certificate was issued and signed by a trusted Root CA, to ensure authenticity.  
+   - **Step 2:** Validating the attestable attributes (e.g., CPU model and OS version) to confirm that the integration process is running within a trusted environment.
 
-10. **Storing the Data**: The decrypted data is locally stored in the service using the `storeLocalData(data)` operation, completing the write operation.
+   If the certificate is valid (`r == true`), the process continues; otherwise, the request is rejected.
 
-This sequence ensures that the data sent from the **Integration Process** to the **Digital Service** is encrypted and protected during transmission, with the **Launcher** acting as the communication facilitator without having access to the data. The encryption and attestable-based verification guarantee that only authorised and trusted integration processes can write data to the digital service.
+9. The digital service invokes its `decrypt()` operation, using its private key (`prK_`) to decrypt the encrypted dataset (`dataEnc`) and recover the original dataset (`data`).
+
+10. Finally, the digital service stores the decrypted dataset locally by invoking its `storeLocalData()` operation, completing the *write* action.
 
 
 
