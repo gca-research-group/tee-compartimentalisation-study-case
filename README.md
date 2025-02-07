@@ -63,8 +63,6 @@ Note that data is transmitted encrypted over the communication channels. Well-kn
 
 # Execution of a Read Action
 
-## Implementation of the `read` Action using the iDevS API
-
 The sequence diagram in Figure 4 details the operations involved. This diagram illustrates how the integration process requests data from a digital service (e.g., the Store Service).
 
 ![Sequence Diagram of the Read Operation](./figs/read.png)
