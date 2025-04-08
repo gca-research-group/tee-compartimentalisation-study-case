@@ -1,33 +1,28 @@
 # A Use-case for Integrating Digital Services with Data Protection at Run Time
 
-The integration of digital services often involves sensitive data which is traditionally executed in untrusted execution environments that expose it to exfiltration risks, putting security and privacy under threat. This is unacceptable in applications that compute highly sensitive data. To address this issue, we present **iDevS**, an API designed for the development and execution of integration processes within **Trusted Execution Environments (TEEs)**. We use smart cities as a context where such APIs are missing, e.g. to process medical data. A salient feature of iDevS~API is that it is independent of underlying technologies. It ensures data protection at execution-time and supports attestation of the execution environment. We discuss a case study to demonstrate how it can be used.
+The integration of digital services often involves sensitive data which is traditionally executed in untrusted environments that expose it to exfiltration risks, putting security and privacy under threat. This is unacceptable in applications that process highly sensitive data. To address this issue, we present **iDevS**, an API designed for the development and execution of integration processes within **Trusted Execution Environments (TEEs)**. We use smart cities as a context where such APIs are missing, such as in medical data processing. A salient feature of iDevS is that it is independent of underlying technologies. It ensures data protection at runtime and supports attestation of the execution environment. We demonstrate its use through a concrete case study.
 
 ---
 
 ## Evaluation Focus
 
-This repository focuses on evaluating two key attestable properties:
+This repository evaluates two attestable properties:
 
 - The operation of the cloud-based attestation procedure discussed in the [attestablelauncher repository](https://github.com/CAMB-DSbD/attestablelauncher).
-- Some performance properties of compartments created on a Morello Board, using a library compartmentalisation tool.
+- Performance properties of compartments created on a Morello Board using a library compartmentalisation tool.
 
-To explore these properties, we have implemented an **Enterprise Application Integration (EAI)** solution, also referred to as an **Integration Process**, which operates within a trusted execution environment (TEE) on experimental Morello Board hardware.
-
-We demonstrate how to execute an integration process within a TEE using Morello Board hardware located in Canada. The case study implements three mock digital services (apps) running on distinct remote servers in Brazil, along with an integration process (program) written and compiled for **CHERI capabilities (cheri-caps)**. The integration process runs inside a secure compartment.
+We implemented an **Enterprise Application Integration (EAI)** solution, referred to as an **Integration Process**, that runs within a TEE on experimental Morello hardware. The case study uses three mock digital services running on remote servers in Brazil, while the integration process is deployed and executed in Canada on the Morello Board. This program is compiled using **CHERI capabilities (cheri-caps)** and executed inside a secure memory compartment.
 
 ---
 
 ## System Requirements
 
-The evaluation was conducted using the following system configuration:
-
 - **Hardware**: Research Morello Board (Research Morello SoC r0p0)
 - **CPU**: 4 cores
-- **RAM**: 16 GB DDR4 ECC (2933 MT/s)
+- **RAM**: 16 GB DDR4
 - **Architecture**: aarch64c with CHERI support
-- **Operating System**: CheriBSD 22.12 (FreeBSD 15.0-CURRENT)
-- **Execution Model**: CheriABI processes using purecap ABI
-- **Compartmentalisation**: Enabled at compile- and runtime for all binaries
+- **Operating System**: CheriBSD 22.12 
+- **Execution Model**: CheriABI processes using `purecap` ABI
 
 ---
 
@@ -37,18 +32,17 @@ The evaluation was conducted using the following system configuration:
 
 *Figure 1: Conceptual View of the EAI.*
 
-The scenario represents a store’s strategy to retain customers by offering free transport home to those who spend at least $150. These customers receive booking confirmations via mobile. The integration process securely automates interactions among three services:
+A store rewards customers who spend at least \$150 with free transport home. These customers receive confirmation messages via WhatsApp. The integration process automates and secures interactions among three digital services:
 
-- **Store Service** – Retrieves purchases and customer data.
-- **Taxi Service** – Books transport.
-- **Messaging Service** – Sends WhatsApp confirmations.
+- **Store Service**: Provides customer and purchase data.
+- **Taxi Service**: Schedules transport.
+- **Messaging Service**: Sends booking confirmations.
 
 The integration process:
-
-1. Periodically performs *read()* on the Store Service.
-2. Checks if purchases ≥ $150.
-3. Issues *write()* to the Taxi Service.
-4. Issues *write()* to the Messaging Service.
+1. Periodically reads transactions from the Store Service.
+2. Verifies if customers qualify.
+3. Requests taxi service.
+4. Sends a confirmation message.
 
 ---
 
@@ -58,9 +52,9 @@ The integration process:
 
 *Figure 2: Architecture of the integration solution using TEE and CHERI compartments.*
 
-The `Integration Process` runs in a secure memory compartment on Morello. The `Launcher` orchestrates upload, compilation, certificate generation, and execution of the binary. Digital services remain external.
+The `Integration Process` runs in a memory-compartmented environment on the Morello Board. The `Launcher`, running in the normal environment, handles compilation, certificate generation, and execution. Digital services remain external and untrusted.
 
-The Launcher bridges encrypted communications without access to data contents. It compiles source files, generates X.509 attestables, and executes the program in an isolated compartment.
+The Launcher relays encrypted requests and responses between the integration process and external services. It compiles source code, generates X.509 certificates, and executes the process inside a secure CHERI compartment.
 
 ---
 
@@ -68,12 +62,18 @@ The Launcher bridges encrypted communications without access to data contents. I
 
 ![Read Operation](./figs/read.png)
 
-*Figure 3: Read action flow – from integration process to digital service.*
+*Figure 3: Read action flow from the integration process to a digital service.*
 
-1. Integration process invokes `read(srvId)`.
-2. Launcher validates program certificate and service reference.
-3. Digital service checks the certificate and sends back encrypted data.
-4. Integration process decrypts the response using its private key.
+Steps:
+1. `Integration Process` invokes `read(srvId)`.
+2. `Launcher` verifies the program using its certificate and retrieves the public key.
+3. `Launcher` sends a `request()` to the digital service with the signed certificate and public key.
+4. Digital service validates the certificate:
+   - Is it signed by a trusted CA (e.g., VeriSign)?
+   - Are the attestable attributes trustworthy?
+5. If valid, the service fetches data, encrypts it with the integration process’s public key.
+6. Encrypted data is returned through the Launcher.
+7. `Integration Process` decrypts the data using its private key.
 
 ---
 
@@ -81,96 +81,95 @@ The Launcher bridges encrypted communications without access to data contents. I
 
 ![Write Operation](./figs/write.png)
 
-*Figure 4: Write action flow – sending data securely to digital service.*
+*Figure 4: Write action flow to transmit encrypted data to a digital service.*
 
-1. Integration process encrypts the dataset with the service’s public key.
-2. Calls `write(srvId, dataEnc)` on the Launcher.
-3. Launcher attaches certificate and forwards the request.
-4. Digital service validates certificate, decrypts data, and stores locally.
+Steps:
+1. `Integration Process` encrypts the payload using the target service’s public key.
+2. Calls `write(srvId, dataEnc)` on the `Launcher`.
+3. `Launcher` attaches the signed certificate and forwards the encrypted data to the digital service.
+4. The digital service verifies the certificate (as above).
+5. If valid, it decrypts the data using its private key and stores it locally.
 
 ---
 
-## Implementation and Execution
+## Component Overview
 
 ### App-Store, App-Transport, and App-Whatsapp
 
-Each service includes:
+Each application includes:
+- REST APIs: `API1.py`, `API2.py`, `API3.py`
+- Databases: `compras.db`, `transport_app.db`
+- Key pairs: `cert.pem`, `priv.pem`
+- Certificate verification logic: `verifyCertificate.py`
 
-- **API** (`API1.py`, `API2.py`, `API3.py`)
-- **Database** (`compras.db`, `transporte_app.db`)
-- **Key pair** (`cert.pem`, `priv.pem`)
-- **Certificate verification** (`verifyCertificate.py`)
-
-| Service         | Endpoint            | Purpose                           |
-|----------------|---------------------|------------------------------------|
-| App-Store      | `/api/sales`        | Check last sale                    |
-| App-Transport  | `/api/trips`        | Schedule transport                 |
-| App-Whatsapp   | `/send-message`     | Send WhatsApp booking confirmation |
-
----
+| Service         | Endpoint        | Description                        |
+|----------------|-----------------|------------------------------------|
+| App-Store      | `/api/sales`    | Check last sale                    |
+| App-Transport  | `/api/trips`    | Book trip                          |
+| App-Whatsapp   | `/send-message` | Send booking confirmation message  |
 
 ### Launcher
 
-Responsible for managing:
-
-- Upload, compile and execution of CHERI-enabled programs
-- Generation of attestable certificates
-- Certificate signing and keypair management
+Responsible for:
+- Receiving program uploads
+- Compiling with CHERI (`clang-morello`, `-mabi=purecap`)
+- Creating X.509 certificates with hardware metadata
+- Executing in a secure compartment
+- Handling secure HTTPS interactions
 
 #### Key Files
-
-- `launcher.py`: Main server interface
-- `command-line-interface.py`: Menu-driven CLI client
-- `generate_certificate.py`: Creates X.509 certificates for integration processes
-- `file_database.json`: Tracks uploaded and compiled files
+- `launcher.py`: Main server
+- `command-line-interface.py`: CLI client
+- `generate_certificate.py`: Generates attestable certificates
+- `file_database.json`: Metadata of uploaded files
 
 #### Directory Structure
-
 ```plaintext
 launcher/
-├── launcher.py                       # Core logic of the launcher
-├── command-line-interface.py         # CLI client to interact with the launcher
+├── launcher.py
+├── command-line-interface.py
 ├── attestable-data/
-│   ├── generate_certificate.py       # Script to generate X.509 certificates
-│   └── signatures/                   # Digital signatures of binaries
+│   ├── generate_certificate.py
+│   └── signatures/
 ├── programs-data-base/
-│   ├── file_database.json            # JSON metadata about uploaded programs
-│   ├── sources/                      # Source files (*.c)
-│   ├── cheri-caps-executables/       # Compiled binaries with CHERI capabilities
-│   └── certificates/                 # Generated certificates for binaries
+│   ├── file_database.json
+│   ├── sources/
+│   ├── cheri-caps-executables/
+│   └── certificates/
 ├── keys/
-│   ├── cert.pem                      # Root certificate
-│   ├── prk.pem                       # Private key
-│   └── puk.pem                       # Public key
+│   ├── cert.pem
+│   ├── prk.pem
+│   └── puk.pem
 ```
 
 ---
 
-### Execution Sequence
+## Execution Instructions
 
-1. **Start Launcher**
-   ```bash
-   python3 launcher.py
-   ```
+1. **Start the Launcher**
+```bash
+$ python3 launcher.py
+```
 
 2. **Run the CLI**
-   ```bash
-   python3 command-line-interface.py
-   ```
+```bash
+$ python3 command-line-interface.py
+```
 
 3. **Upload Source Code**
-   - Select option to upload `.c` program (e.g., `integration_process.c`).
+   - Select `integration_process.c` and upload to the Launcher.
 
-4. **Compile**
-   - Compiles using `clang-morello` with `-mabi=purecap`.
+4. **Compile Program**
+   - Launcher compiles for Morello with CHERI support.
 
-5. **Execute**
-   - Runs the binary inside a CHERI memory compartment.
+5. **Execute Program**
+   - Binary is executed inside a CHERI compartment.
 
-6. **Certificate Generation**
-   - `generate_certificate.py` is invoked to embed system/hardware data in a signed X.509 certificate.
+6. **Generate Certificate**
+   - `generate_certificate.py` is invoked to generate signed attestables with system info (CPU, RAM, etc.).
 
-7. **Inter-service Communication**
-   - The binary calls external APIs (`API1`, `API2`, `API3`) securely over HTTPS using OpenSSL.
+7. **Perform Secure Integration**
+   - Integration process securely communicates with the three services using HTTPS and OpenSSL.
 
+---
 
