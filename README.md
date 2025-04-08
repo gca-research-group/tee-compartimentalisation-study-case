@@ -4,17 +4,6 @@ The integration of digital services often involves sensitive data which is tradi
 
 ---
 
-## Evaluation Focus
-
-This repository evaluates two attestable properties:
-
-- The operation of the cloud-based attestation procedure discussed in the [attestablelauncher repository](https://github.com/CAMB-DSbD/attestablelauncher).
-- Performance properties of compartments created on a Morello Board using a library compartmentalisation tool.
-
-We implemented an **Enterprise Application Integration (EAI)** solution, referred to as an **Integration Process**, that runs within a TEE on experimental Morello hardware. The case study uses three mock digital services running on remote servers in Brazil, while the integration process is deployed and executed in Canada on the Morello Board. This program is compiled using **CHERI capabilities (cheri-caps)** and executed inside a secure memory compartment.
-
----
-
 ## System Requirements
 
 - **Hardware**: Research Morello Board (Research Morello SoC r0p0)
