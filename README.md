@@ -4,17 +4,6 @@
 
 ---
 
-## System Requirements
-
-- **Hardware**: Research Morello Board (Research Morello SoC r0p0)
-- **CPU**: 4 cores
-- **RAM**: 16 GB DDR4
-- **Architecture**: aarch64c with CHERI support
-- **Operating System**: CheriBSD 22.12 
-- **Execution Model**: CheriABI processes using `purecap` ABI
-
----
-
 ## Integration Problem Overview
 
 ![Conceptual View of the EAI](./figs/EAI-2.png)
@@ -144,6 +133,17 @@ $ python3 launcher.py
 ```bash
 $ python3 command-line-interface.py
 ```
+
+---
+
+## System Requirements
+
+- **Hardware**: Research Morello Board (Research Morello SoC r0p0)
+- **CPU**: 4 cores
+- **RAM**: 16 GB DDR4
+- **Architecture**: aarch64c with CHERI support
+- **Operating System**: CheriBSD 22.12 
+- **Execution Model**: CheriABI processes using `purecap` ABI
 
 ---
 
