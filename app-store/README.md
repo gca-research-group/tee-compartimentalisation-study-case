@@ -25,7 +25,7 @@ The service utilises a local SQLite database (`compras.db`) and X.509 digital ce
 - **Operating System**: Ubuntu 22.04.4 LTS
 - **Processor**: Intel Core i5 (or equivalent or higher)
 - **Memory (RAM)**: 4 GB
-- **Storage**: 1 GB of available disk space
+- **Storage**: 10 GB of available disk space
 
 ---
 
