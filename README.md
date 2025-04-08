@@ -156,20 +156,5 @@ $ python3 launcher.py
 $ python3 command-line-interface.py
 ```
 
-3. **Upload Source Code**
-   - Select `integration_process.c` and upload to the Launcher.
-
-4. **Compile Program**
-   - Launcher compiles for Morello with CHERI support.
-
-5. **Execute Program**
-   - Binary is executed inside a CHERI compartment.
-
-6. **Generate Certificate**
-   - `generate_certificate.py` is invoked to generate signed attestables with system info (CPU, RAM, etc.).
-
-7. **Perform Secure Integration**
-   - Integration process securely communicates with the three services using HTTPS and OpenSSL.
-
 ---
 
