@@ -4,50 +4,63 @@ The integration of digital services often involves sensitive data which is tradi
 
 ---
 
+## Evaluation Focus
+
+This repository focuses on evaluating two key attestable properties:
+
+- The operation of the cloud-based attestation procedure discussed in the [attestablelauncher repository](https://github.com/CAMB-DSbD/attestablelauncher).
+- Some performance properties of compartments created on a Morello Board, using a library compartmentalisation tool.
+
+To explore these properties, we have implemented an **Enterprise Application Integration (EAI)** solution, also referred to as an **Integration Process**, which operates within a trusted execution environment (TEE) on experimental Morello Board hardware.
+
+We demonstrate how to execute an integration process within a TEE using Morello Board hardware located in Canada. The case study implements three mock digital services (apps) running on distinct remote servers in Brazil, along with an integration process (program) written and compiled for **CHERI capabilities (cheri-caps)**. The integration process runs inside a secure compartment.
+
+---
+
 ## System Requirements
 
-The experiments and implementation rely on the following system specifications:
+The evaluation was conducted using the following system configuration:
 
-- **Hardware**: ARM Research Morello Board based on the Research Morello SoC r0p0 processor  
-- **CPU**: 4 cores  
-- **RAM**: 16 GB DDR4 ECC (2933 MT/s)  
-- **Architecture**: aarch64c with CHERI support  
-- **Operating System**: CheriBSD 22.12 compiled using Clang with Morello extensions  
-- **Execution Model**: CheriABI processes using `purecap` ABI 
-
+- **Hardware**: Research Morello Board (Research Morello SoC r0p0)
+- **CPU**: 4 cores
+- **RAM**: 16 GB DDR4 ECC (2933 MT/s)
+- **Architecture**: aarch64c with CHERI support
+- **Operating System**: CheriBSD 22.12 (FreeBSD 15.0-CURRENT)
+- **Execution Model**: CheriABI processes using purecap ABI
+- **Compartmentalisation**: Enabled at compile- and runtime for all binaries
 
 ---
 
 ## Integration Problem Overview
 
-A conceptual view of the application involved in the EAI is illustrated in **Figure 1**.
-
 ![Conceptual View of the EAI](./figs/EAI-2.png)
 
-*Figure 1: Conceptual view of the integration process.*
+*Figure 1: Conceptual View of the EAI.*
 
-The scenario represents a strategy implemented by a store to attract and retain customers: it offers free transport back home to customers who spend at least \$150 in the store. The rewarded customers receive booking confirmation messages on their mobile phones. The integration process is responsible for automating and securely coordinating the interactions among three independent digital services:
+The scenario represents a store’s strategy to retain customers by offering free transport home to those who spend at least $150. These customers receive booking confirmations via mobile. The integration process securely automates interactions among three services:
 
-- **Store Service**: Provides details about customers (e.g., mobile phone number and address) and their purchases (e.g., Total purchased).
-- **Taxi Service**: Schedules transportation.
-- **Messaging Service**: Sends booking confirmation messages.
+- **Store Service** – Retrieves purchases and customer data.
+- **Taxi Service** – Books transport.
+- **Messaging Service** – Sends WhatsApp confirmations.
 
-To automate the coordination, the integration process executes the following *read* and *write* actions:
+The integration process:
 
-1. **Read Action**: Periodically executes *read* actions on the Store Service to retrieve customers' transaction details.  
-2. **Eligibility Check**: Identifies customers who are eligible for free transport based on their purchase amount.  
-3. **Write Action (Taxi Service)**: Executes a *write* action on the Taxi Service to request taxi services for the rewarded customers.  
-4. **Write Action (Messaging Service)**: Executes a *write* action on the Messaging Service to send booking confirmations to the awarded customers.  
+1. Periodically performs *read()* on the Store Service.
+2. Checks if purchases ≥ $150.
+3. Issues *write()* to the Taxi Service.
+4. Issues *write()* to the Messaging Service.
 
 ---
 
 ## Integration Process Design
 
-![Architecture](./figs/case-study.png)
+![Architecture of the Integration Process](./figs/case-study.png)
 
-*Figure 2: Architecture of the integration process solution in the case study.*
+*Figure 2: Architecture of the integration solution using TEE and CHERI compartments.*
 
-The integration process runs in a secure memory compartment (indicated in yellow). The **Launcher** orchestrates compilation, deployment and secure communication with external digital services. It compiles the source code uploaded to it, signs the binary and generates a certificate with system attributes embedded as X.509 extensions. Data read/write actions are relayed by the Launcher without accessing their contents.
+The `Integration Process` runs in a secure memory compartment on Morello. The `Launcher` orchestrates upload, compilation, certificate generation, and execution of the binary. Digital services remain external.
+
+The Launcher bridges encrypted communications without access to data contents. It compiles source files, generates X.509 attestables, and executes the program in an isolated compartment.
 
 ---
 
@@ -55,9 +68,12 @@ The integration process runs in a secure memory compartment (indicated in yellow
 
 ![Read Operation](./figs/read.png)
 
-*Figure 3: Operations to implement the read action for requesting data from a digital service.*
+*Figure 3: Read action flow – from integration process to digital service.*
 
-The integration process invokes `read(srvId)` → The Launcher verifies the executable’s certificate → The digital service validates the certificate and returns encrypted data → The integration process decrypts and uses the data.
+1. Integration process invokes `read(srvId)`.
+2. Launcher validates program certificate and service reference.
+3. Digital service checks the certificate and sends back encrypted data.
+4. Integration process decrypts the response using its private key.
 
 ---
 
@@ -65,43 +81,50 @@ The integration process invokes `read(srvId)` → The Launcher verifies the exec
 
 ![Write Operation](./figs/write.png)
 
-*Figure 4: Operations to implement the write action for posting data to a digital service.*
+*Figure 4: Write action flow – sending data securely to digital service.*
 
-The integration process encrypts the payload with the service’s public key and calls `write(srvId, dataEnc)` → The Launcher attaches the certificate and sends it → The digital service validates the certificate and decrypts the data for local processing.
+1. Integration process encrypts the dataset with the service’s public key.
+2. Calls `write(srvId, dataEnc)` on the Launcher.
+3. Launcher attaches certificate and forwards the request.
+4. Digital service validates certificate, decrypts data, and stores locally.
 
 ---
 
 ## Implementation and Execution
 
-### 1) App-Store, App-Transport, and App-Whatsapp
+### App-Store, App-Transport, and App-Whatsapp
 
-Each of these directories includes:
+Each service includes:
 
-- `API1.py`, `API2.py`, `API3.py`: REST APIs for reading sales, booking transport, and sending messages.
-- SQLite databases (`compras.db`, `transport_app.db`).
-- Certificates and keys (`cert.pem`, `priv.pem`).
+- **API** (`API1.py`, `API2.py`, `API3.py`)
+- **Database** (`compras.db`, `transporte_app.db`)
+- **Key pair** (`cert.pem`, `priv.pem`)
+- **Certificate verification** (`verifyCertificate.py`)
 
-### 2) Launcher
-
-- `launcher.py`: Main server to manage upload, compilation, and execution.
-- `command-line-interface.py`: CLI client to interact with the launcher.
-- `generate_certificate.py`: Creates attestable certificates for compiled binaries.
-- `programs-data-base/`: Stores source codes, executables, certificates and metadata.
-- `attestable-data/signatures/`: Holds signature files for attestation.
-
-### Execution Sequence
-
-1. Run `launcher.py`.
-2. Open `command-line-interface.py`.
-3. Upload the C program (`integration_process.c`).
-4. Compile the code for CHERI using purecap ABI.
-5. Execute the program inside a CHERI compartment.
-6. Certificates are generated automatically from hardware/software state.
-7. `integration_process.c` performs secure HTTPS calls to APIs using OpenSSL.
+| Service         | Endpoint            | Purpose                           |
+|----------------|---------------------|------------------------------------|
+| App-Store      | `/api/sales`        | Check last sale                    |
+| App-Transport  | `/api/trips`        | Schedule transport                 |
+| App-Whatsapp   | `/send-message`     | Send WhatsApp booking confirmation |
 
 ---
 
-## Directory Structure
+### Launcher
+
+Responsible for managing:
+
+- Upload, compile and execution of CHERI-enabled programs
+- Generation of attestable certificates
+- Certificate signing and keypair management
+
+#### Key Files
+
+- `launcher.py`: Main server interface
+- `command-line-interface.py`: Menu-driven CLI client
+- `generate_certificate.py`: Creates X.509 certificates for integration processes
+- `file_database.json`: Tracks uploaded and compiled files
+
+#### Directory Structure
 
 ```plaintext
 launcher/
@@ -119,3 +142,35 @@ launcher/
 │   ├── cert.pem                      # Root certificate
 │   ├── prk.pem                       # Private key
 │   └── puk.pem                       # Public key
+```
+
+---
+
+### Execution Sequence
+
+1. **Start Launcher**
+   ```bash
+   python3 launcher.py
+   ```
+
+2. **Run the CLI**
+   ```bash
+   python3 command-line-interface.py
+   ```
+
+3. **Upload Source Code**
+   - Select option to upload `.c` program (e.g., `integration_process.c`).
+
+4. **Compile**
+   - Compiles using `clang-morello` with `-mabi=purecap`.
+
+5. **Execute**
+   - Runs the binary inside a CHERI memory compartment.
+
+6. **Certificate Generation**
+   - `generate_certificate.py` is invoked to embed system/hardware data in a signed X.509 certificate.
+
+7. **Inter-service Communication**
+   - The binary calls external APIs (`API1`, `API2`, `API3`) securely over HTTPS using OpenSSL.
+
+
