@@ -1,6 +1,6 @@
 # A Use-case for Integrating Digital Services with Data Protection at Run Time
 
-**Abstract:** The integration of digital services often involves sensitive data which is traditionally executed in untrusted execution environments that expose it to exfiltration risks, putting security and privacy under threat. This is unacceptable in applications that compute highly sensitive data. To address this issue, we present iDevS, an API designed for the development and execution of integration processes within Trusted Execution Environments. We use smart cities as a context where such APIs are missing, e.g. to process medical data. A salient feature of iDevS API is that it is independent of underlying technologies. It ensures data protection at execution--time and supports attestation of the execution environment. We discuss a case study to demonstrate how it can be used.
+**Abstract:** The integration of digital services often involves sensitive data which is traditionally executed in untrusted execution environments that expose it to exfiltration risks, putting security and privacy under threat. This is unacceptable in applications that perform critical computations over such data. To address this issue, we present iDevS, an API designed for the development and execution of integration processes within Trusted Execution Environments. We use smart cities as a context where such APIs are missing, e.g. to process medical data. A salient feature of iDevS~API is that it is independent of underlying technologies. It ensures data protection at execution-time and supports attestation of the execution environment. We discuss a case study to demonstrate its use.
 
 ---
 
@@ -157,10 +157,7 @@ Run the following commands to install the required system packages:
 sudo apt-get update
 sudo apt-get install \
   python3 \
-  python3-pip \
-  python3-tk \
-  sqlite3 \
-  libsqlite3-dev \
+  python3-pip \  
   libssl-dev \
   openssl \
   build-essential \
@@ -168,7 +165,7 @@ sudo apt-get install \
 ```
 
 > On CheriBSD, use:  
-> `sudo pkg64 install python3 py39-pip openssl curl sqlite3`
+> `sudo pkg64 install python39 py39-pip py39-openssl`
 
 ---
 
