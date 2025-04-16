@@ -95,6 +95,7 @@ Responsible for:
 - Executing in a secure compartment
 - Handling secure HTTPS interactions
 
+
 #### Key Files
 - `launcher.py`: Main server
 - `command-line-interface.py`: CLI client
@@ -118,6 +119,42 @@ launcher/
 │   ├── cert.pem
 │   ├── prk.pem
 │   └── puk.pem
+```
+
+---
+
+### Overhead Analysis
+
+The `overhead-analysis/` directory contains the scripts and results used to estimate the computational overhead introduced by the `Launcher` component. Each script benchmarks one of the main operations abstracted by the API (e.g., `read()`, `write()`, `encrypt()`, `generateCertificate()`, etc.) using synthetic workloads.
+
+Each experiment:
+- Executes the operation 100 times.
+- Measures the execution time in milliseconds.
+- Stores results in a CSV file for reproducibility and analysis.
+
+These experiments were conducted on conventional Linux environments (e.g., Ubuntu 22.04) and were used to populate the empirical values in Table 3 of the paper. They allow assessing performance trade-offs between reusability, centralisation, and execution-time cost.
+
+#### Directory Contents
+```plaintext
+overhead-analysis/
+├── encrypt-decrypt/
+│   ├── encrypt_results.csv
+│   ├── decrypt_results.csv
+├── exchange-keys/
+│   ├── exchangeKeys_results.csv
+├── get-certificate/
+│   ├── getCertificate_results.csv
+├── get-public-key/
+│   ├── getPublicKey_results.csv
+├── generate-certificate/
+│   ├── generateCertificate_results.csv
+├── lookup-service/
+│   ├── lookupService_results.csv
+├── overhead-http/
+│   ├── overhead_get.csv
+│   ├── overhead_post.csv
+├── scripts/
+│   ├── All experiment scripts used to produce the CSVs above
 ```
 
 ---
