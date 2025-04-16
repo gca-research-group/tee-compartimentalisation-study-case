@@ -18,7 +18,6 @@ with open(CSV_FILE, mode="w", newline="") as f:
 
         start = time.perf_counter()
 
-        # Gerar chave privada
         subprocess.run([
             "openssl", "genpkey", "-algorithm", "RSA",
             "-out", priv_path,
