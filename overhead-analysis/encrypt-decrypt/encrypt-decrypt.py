@@ -3,20 +3,18 @@ import time
 import csv
 import subprocess
 
-# Parâmetros
 encrypt_file = "encrypt_results.csv"
 decrypt_file = "decrypt_results.csv"
 plaintext = b"A" * 128  # tamanho múltiplo de 16 (bloco AES)
 key = os.urandom(16).hex()
 iv = os.urandom(16).hex()
 
-# Arquivos temporários
 with open("input_plain.txt", "wb") as f:
     f.write(plaintext)
 
 ciphertexts = []
 
-# === ENCRYPT ===
+# ENCRYPT 
 with open(encrypt_file, mode='w', newline='') as csvfile_enc:
     writer_enc = csv.writer(csvfile_enc)
     writer_enc.writerow(["iteration", "duration_ms"])
@@ -36,7 +34,7 @@ with open(encrypt_file, mode='w', newline='') as csvfile_enc:
         writer_enc.writerow([i, f"{duration:.3f}"])
         ciphertexts.append(out_file)
 
-# === DECRYPT ===
+# DECRYPT 
 with open(decrypt_file, mode='w', newline='') as csvfile_dec:
     writer_dec = csv.writer(csvfile_dec)
     writer_dec.writerow(["iteration", "duration_ms"])
@@ -55,7 +53,6 @@ with open(decrypt_file, mode='w', newline='') as csvfile_dec:
         duration = (end - start) * 1000
         writer_dec.writerow([i, f"{duration:.3f}"])
 
-# Limpar arquivos temporários
 os.remove("input_plain.txt")
 for f in ciphertexts:
     os.remove(f)
