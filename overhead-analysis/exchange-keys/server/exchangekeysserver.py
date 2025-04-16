@@ -3,7 +3,6 @@ import os
 
 app = Flask(__name__)
 
-# Diretório para salvar as chaves públicas recebidas
 os.makedirs("received_keys", exist_ok=True)
 
 @app.route("/exchange-key", methods=["POST"])
