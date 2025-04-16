@@ -127,27 +127,6 @@ launcher/
 
 The `overhead-analysis/` directory contains the scripts and results used to estimate the computational overhead introduced by the `Launcher` component. 
 
-#### Directory Contents
-```plaintext
-overhead-analysis/
-├── encrypt-decrypt/
-│   ├── encrypt_results.csv
-│   ├── decrypt_results.csv
-├── exchange-keys/
-│   ├── exchangeKeys_results.csv
-├── get-certificate/
-│   ├── getCertificate_results.csv
-├── get-public-key/
-│   ├── getPublicKey_results.csv
-├── generate-certificate/
-│   ├── generateCertificate_results.csv
-├── lookup-service/
-│   ├── lookupService_results.csv
-├── overhead-http/
-│   ├── overhead_get.csv
-│   ├── overhead_post.csv
-```
-
 ---
 
 ## Execution Instructions
