@@ -5,7 +5,7 @@ import subprocess
 
 encrypt_file = "encrypt_results.csv"
 decrypt_file = "decrypt_results.csv"
-plaintext = b"A" * 128  # tamanho múltiplo de 16 (bloco AES)
+plaintext = b"A" * 128  
 key = os.urandom(16).hex()
 iv = os.urandom(16).hex()
 
