@@ -125,14 +125,7 @@ launcher/
 
 ### Overhead Analysis
 
-The `overhead-analysis/` directory contains the scripts and results used to estimate the computational overhead introduced by the `Launcher` component. Each script benchmarks one of the main operations abstracted by the API (e.g., `read()`, `write()`, `encrypt()`, `generateCertificate()`, etc.) using synthetic workloads.
-
-Each experiment:
-- Executes the operation 100 times.
-- Measures the execution time in milliseconds.
-- Stores results in a CSV file for reproducibility and analysis.
-
-These experiments were conducted on conventional Linux environments (e.g., Ubuntu 22.04) and were used to populate the empirical values in Table 3 of the paper. They allow assessing performance trade-offs between reusability, centralisation, and execution-time cost.
+The `overhead-analysis/` directory contains the scripts and results used to estimate the computational overhead introduced by the `Launcher` component. 
 
 #### Directory Contents
 ```plaintext
