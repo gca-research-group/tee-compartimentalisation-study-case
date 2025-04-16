@@ -146,8 +146,6 @@ overhead-analysis/
 ├── overhead-http/
 │   ├── overhead_get.csv
 │   ├── overhead_post.csv
-├── scripts/
-│   ├── All experiment scripts used to produce the CSVs above
 ```
 
 ---
