@@ -7,8 +7,7 @@ This repository contains benchmark scripts and results for evaluating the perfor
 ## Directory Structure
 
 ```
-overhead-analysis/
-├── encrypt-decrypt/         
+overhead-analysis/        
 ├── exchange-keys/           
 ├── generate-certificate/    
 ├── get-certificate/         
@@ -42,7 +41,6 @@ overhead-analysis/
 
 Each experiment in this repository isolates a specific operation used in the Launcher and measures its execution time across 100 iterations. Below is a summary of each:
 
-- **encrypt-decrypt/**: Measures the time to encrypt and decrypt a 128-byte plaintext using AES-CBC mode.
 - **exchange-keys/**: Simulates the exchange of public keys between a client and a server over HTTPS.
 - **generate-certificate/**: Generates an RSA-2048 key pair and an X.509 certificate with custom extensions.
 - **get-certificate/**: Measures the time to read a PEM-formatted certificate from disk.
@@ -58,18 +56,7 @@ Each folder contains a Python script that runs the test and saves output to a CS
 
 ---
 
-### 1. `encrypt-decrypt/`
-```bash
-cd encrypt-decrypt
-python3 encrypt-decrypt.py
-```
-Outputs:
-- `encrypt_results.csv`
-- `decrypt_results.csv`
-
----
-
-### 2. `exchange-keys/`
+### 1. `exchange-keys/`
 Start the server:
 ```bash
 cd exchange-keys/server
@@ -84,7 +71,7 @@ Output: `exchangeKeys_results.csv`
 
 ---
 
-### 3. `generate-certificate/`
+### 2. `generate-certificate/`
 ```bash
 cd generate-certificate
 python3 generatecertificate.py
@@ -93,7 +80,7 @@ Output: `generateCertificate_results.csv`
 
 ---
 
-### 4. `get-certificate/`
+### 3. `get-certificate/`
 ```bash
 cd get-certificate
 python3 getcertificate.py
@@ -102,7 +89,7 @@ Output: `getCertificate_results.csv`
 
 ---
 
-### 5. `get-publickey/`
+### 4. `get-publickey/`
 ```bash
 cd get-publickey
 python3 getpublickey.py
@@ -111,7 +98,7 @@ Output: `getPublicKey_results.csv`
 
 ---
 
-### 6. `lockup-service/`
+### 5. `lockup-service/`
 ```bash
 cd lockup-service
 python3 lockupservice.py
@@ -120,7 +107,7 @@ Output: `lookupService_results.csv`
 
 ---
 
-### 7. `read-write/`
+### 6. `read-write/`
 Start the target API (e.g., API1.py) and then:
 ```bash
 cd read-write
