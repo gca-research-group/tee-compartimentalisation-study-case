@@ -1,6 +1,6 @@
-# Overhead Analysis of Laucher's operations
+# Overhead Analysis of Launcher Operations
 
-This repository contains benchmark scripts and results for evaluating the performance overhead of core operations in the Launcher operations, including cryptographic functions, certificate management, and interactions with digital services. Each subdirectory contains self-contained experiments designed to isolate and measure the execution time of specific operations.
+This repository contains benchmark scripts and results for evaluating the performance overhead of core operations in the Launcher, including program retrieval, certificate management, and service orchestration tasks. Each subdirectory contains self-contained experiments designed to isolate and measure the execution time of specific operations.
 
 ---
 
@@ -9,11 +9,13 @@ This repository contains benchmark scripts and results for evaluating the perfor
 ```
 overhead-analysis/        
 ├── exchange-keys/           
+├── generate-attestable-doc/
 ├── generate-certificate/    
 ├── get-certificate/         
 ├── get-publickey/           
 ├── lockup-service/         
 ├── read-write/             
+├── retrieve-program/
 ```
 
 ---
@@ -41,6 +43,8 @@ overhead-analysis/
 
 Each experiment in this repository isolates a specific operation used in the Launcher and measures its execution time across 100 iterations. Below is a summary of each:
 
+- **retrieve-program/**: Simulates retrieving the integration program binary from a local registry file.
+- **generate-attestable-doc/**: Simulates the creation of an attestable document, including metadata serialization and disk write.
 - **exchange-keys/**: Simulates the exchange of public keys between a client and a server over HTTPS.
 - **generate-certificate/**: Generates an RSA-2048 key pair and an X.509 certificate with custom extensions.
 - **get-certificate/**: Measures the time to read a PEM-formatted certificate from disk.
@@ -56,7 +60,25 @@ Each folder contains a Python script that runs the test and saves output to a CS
 
 ---
 
-### 1. `exchange-keys/`
+### 1. `retrieve-program/`
+```bash
+cd retrieve-program/scripts
+python3 measure_retrieve_program.py
+```
+Output: `retrieve_times.csv`
+
+---
+
+### 2. `generate-attestable-doc/`
+```bash
+cd generate-attestable-doc
+python3 generate_attestable_doc.py
+```
+Output: `generate_attestable_doc_times.csv`
+
+---
+
+### 3. `exchange-keys/`
 Start the server:
 ```bash
 cd exchange-keys/server
@@ -71,7 +93,7 @@ Output: `exchangeKeys_results.csv`
 
 ---
 
-### 2. `generate-certificate/`
+### 4. `generate-certificate/`
 ```bash
 cd generate-certificate
 python3 generatecertificate.py
@@ -80,7 +102,7 @@ Output: `generateCertificate_results.csv`
 
 ---
 
-### 3. `get-certificate/`
+### 5. `get-certificate/`
 ```bash
 cd get-certificate
 python3 getcertificate.py
@@ -89,7 +111,7 @@ Output: `getCertificate_results.csv`
 
 ---
 
-### 4. `get-publickey/`
+### 6. `get-publickey/`
 ```bash
 cd get-publickey
 python3 getpublickey.py
@@ -98,7 +120,7 @@ Output: `getPublicKey_results.csv`
 
 ---
 
-### 5. `lockup-service/`
+### 7. `lockup-service/`
 ```bash
 cd lockup-service
 python3 lockupservice.py
@@ -107,7 +129,7 @@ Output: `lookupService_results.csv`
 
 ---
 
-### 6. `read-write/`
+### 8. `read-write/`
 Start the target API (e.g., API1.py) and then:
 ```bash
 cd read-write
