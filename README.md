@@ -1,4 +1,4 @@
-# A Use-case for Integrating Digital Services with Data Protection at Run Time
+# A Use-case for Integrating Digital Services with Data Protection at Execution-Time
 
 **Abstract:** The integration of digital services is currently implemented by integration processes owned by third parties and executed in conventional computer with no mechanisms for preventing data exfiltration at execution-time. This is unacceptable when the integration processes retrieve highly sensitive data from digital services. To address this issue, we have designed iDevS, an API for the development of integration processes to be executed  within Trusted Execution Environments. We use smart cities as a context where such APIs are missing, e.g. to process medical data. iDevS API is agnostic to the underlying technologies, ensures data protection at execution-time and supports attestation of the execution environment. We discuss a case study to demonstrate its use.
 
