@@ -1,6 +1,6 @@
 # A Use-case for Integrating Digital Services with Data Protection at Run Time
 
-**Abstract:** The integration of digital services often involves sensitive data which is traditionally executed in untrusted execution environments that expose it to exfiltration risks, putting security and privacy under threat. This is unacceptable in applications that perform critical computations over such data. To address this issue, we present iDevS, an API designed for the development and execution of integration processes within Trusted Execution Environments. We use smart cities as a context where such APIs are missing, e.g. to process medical data. A salient feature of iDevS~API is that it is independent of underlying technologies. It ensures data protection at execution-time and supports attestation of the execution environment. We discuss a case study to demonstrate its use.
+**Abstract:** The integration of digital services is currently implemented by integration processes owned by third parties and executed in conventional computer with no mechanisms for preventing data exfiltration at execution time. This is unacceptable when the integration processes retrieve highly sensitive data from digital services. To address this issue, we have designed iDevS, an API for the development of integration processes to be executed  within Trusted Execution Environments. We use smart cities as a context where such APIs are missing, e.g. to process medical data. iDevS API is agnostic to the underlying technologies, ensures data protection at execution-time and supports attestation of the execution environment. We discuss a case study to demonstrate its use.
 
 ---
 
@@ -149,7 +149,7 @@ $ python3 command-line-interface.py
 - **CPU**: 4 cores
 - **RAM**: 16 GB DDR4
 - **Architecture**: aarch64c with CHERI support
-- **Operating System**: CheriBSD 22.12 
+- **Operating System**: CheriBSD 24.05 
 - **Execution Model**: CheriABI processes using `purecap` ABI
 
 ---
