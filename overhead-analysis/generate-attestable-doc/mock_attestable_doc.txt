@@ -1,1 +1,0 @@
-{'program_name': 'integration_process', 'cpu_model': 'Morello SoC', 'capabilities': ['read', 'write', 'encrypt'], 'timestamp': 1745336710.1303809}
