@@ -1,21 +1,17 @@
 # Overhead Analysis of Launcher Operations
 
-This repository contains benchmark scripts and results for evaluating the performance overhead of core operations in the Launcher, including program retrieval, certificate management, and service orchestration tasks. Each subdirectory contains self-contained experiments designed to isolate and measure the execution time of specific operations.
+This repository contains benchmark scripts and results for evaluating the performance overhead of the read and write actions supported by the Launcher. These actions are composed of the following operations: lookupService(), getCertificate(), and getProgramPublicKey(). Each subdirectory contains self-contained experiments that isolate and measure the execution time of these operations individually.
 
 ---
 
 ## Directory Structure
 
 ```
-overhead-analysis/        
-├── exchange-keys/           
-├── generate-attestable-doc/
-├── generate-certificate/    
+overhead-analysis/
+├── lockup-service/    
 ├── get-certificate/         
 ├── get-publickey/           
-├── lockup-service/         
-├── read-write/             
-├── retrieve-program/
+
 ```
 
 ---
@@ -34,23 +30,15 @@ overhead-analysis/
 
 - Python 3.6+
 - Flask (`pip install Flask`)
-- OpenSSL (for certificate generation)
-- For HTTPS tests: self-signed `cert.pem` and `priv.pem`
-
 ---
 
 ## Experiment Summaries
 
 Each experiment in this repository isolates a specific operation used in the Launcher and measures its execution time across 100 iterations. Below is a summary of each:
 
-- **retrieve-program/**: Simulates retrieving the integration program binary from a local registry file.
-- **generate-attestable-doc/**: Simulates the creation of an attestable document, including metadata serialization and disk write.
-- **exchange-keys/**: Simulates the exchange of public keys between a client and a server over HTTPS.
-- **generate-certificate/**: Generates an RSA-2048 key pair and an X.509 certificate with custom extensions.
+- **lockup-service/**: Benchmarks the DNS resolution time for a remote service (e.g., 'example.com').
 - **get-certificate/**: Measures the time to read a PEM-formatted certificate from disk.
 - **get-publickey/**: Simulates retrieving a public key from an in-memory dictionary.
-- **lockup-service/**: Benchmarks the DNS resolution time for a remote service (e.g., 'example.com').
-- **read-write/**: Performs 100 HTTPS GET and POST requests to a running API (e.g., API1.py).
 
 ---
 
@@ -60,67 +48,7 @@ Each folder contains a Python script that runs the test and saves output to a CS
 
 ---
 
-### 1. `retrieve-program/`
-```bash
-cd retrieve-program/scripts
-python3 measure_retrieve_program.py
-```
-Output: `retrieve_times.csv`
-
----
-
-### 2. `generate-attestable-doc/`
-```bash
-cd generate-attestable-doc
-python3 generate_attestable_doc.py
-```
-Output: `generate_attestable_doc_times.csv`
-
----
-
-### 3. `exchange-keys/`
-Start the server:
-```bash
-cd exchange-keys/server
-python3 exchangekeysserver.py
-```
-Then run the client:
-```bash
-cd ../client
-python3 exchangekeysclient.py
-```
-Output: `exchangeKeys_results.csv`
-
----
-
-### 4. `generate-certificate/`
-```bash
-cd generate-certificate
-python3 generatecertificate.py
-```
-Output: `generateCertificate_results.csv`
-
----
-
-### 5. `get-certificate/`
-```bash
-cd get-certificate
-python3 getcertificate.py
-```
-Output: `getCertificate_results.csv`
-
----
-
-### 6. `get-publickey/`
-```bash
-cd get-publickey
-python3 getpublickey.py
-```
-Output: `getPublicKey_results.csv`
-
----
-
-### 7. `lockup-service/`
+### 1. `lockup-service/`
 ```bash
 cd lockup-service
 python3 lockupservice.py
@@ -129,14 +57,20 @@ Output: `lookupService_results.csv`
 
 ---
 
-### 8. `read-write/`
-Start the target API (e.g., API1.py) and then:
+### 2. `get-certificate/`
 ```bash
-cd read-write
-python3 read-write.py
+cd get-certificate
+python3 getcertificate.py
 ```
-Outputs:
-- `overhead_get.csv`
-- `overhead_post.csv`
+Output: `getCertificate_results.csv`
+
+---
+
+### 3. `get-publickey/`
+```bash
+cd get-publickey
+python3 getpublickey.py
+```
+Output: `getPublicKey_results.csv`
 
 ---
